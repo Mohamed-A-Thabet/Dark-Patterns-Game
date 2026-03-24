@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS POINTS — Performance Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & VARIABLES ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#07090f; --bg-mid:#0d1321; --bg-card:#111827; --bg-card2:#0f1720;
+  --cyan:#22d3ee; --cyan-bright:#67e8f9; --cyan-dim:rgba(34,211,238,.13);
+  --gold:#f59e0b; --gold-bright:#fbbf24; --gold-dim:rgba(245,158,11,.13);
+  --green:#10b981; --green-bright:#34d399;
+  --red:#ef4444; --red-dim:rgba(239,68,68,.13);
+  --purple:#a855f7; --pink:#ec4899;
+  --white:#f1f5f9; --white-dim:#94a3b8; --white-muted:#334155;
+  --border:rgba(34,211,238,.12); --shadow:0 4px 32px rgba(0,0,0,.5);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden;}
+
+/* ── SCREEN SYSTEM ─────────────────────────────────────────────── */
+.screen{display:none;min-height:100vh;opacity:0;transition:opacity .35s ease;}
+.screen.active{display:flex;flex-direction:column;}
+.screen.visible{opacity:1;}
+
+/* ── BUTTONS ───────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;
+  font-size:15px;font-weight:500;cursor:pointer;border:none;transition:all .2s ease;text-decoration:none;}
+.btn-primary{background:var(--cyan);color:var(--bg);font-weight:700;}
+.btn-primary:hover{background:var(--cyan-bright);transform:translateY(-1px);box-shadow:0 8px 24px rgba(34,211,238,.35);}
+.btn-gold{background:var(--gold);color:var(--bg);font-weight:800;font-size:16px;padding:16px 36px;border-radius:12px;letter-spacing:.3px;}
+.btn-gold:hover{background:var(--gold-bright);transform:translateY(-1px);box-shadow:0 10px 28px rgba(245,158,11,.45);}
+.btn-ghost{background:transparent;color:var(--white-dim);border:1px solid var(--white-muted);font-size:13px;padding:10px 20px;}
+.btn-ghost:hover{border-color:var(--white-dim);color:var(--white);}
+
+/* ── BADGES ────────────────────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;
+  font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.badge-ai{background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(34,211,238,.3);}
+.badge-urgent{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.35);animation:pulse-badge 1.6s infinite;}
+.badge-social{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
+@keyframes pulse-badge{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4);}50%{box-shadow:0 0 0 5px rgba(239,68,68,0);}}
+
+/* ── SCREEN 1: WELCOME ─────────────────────────────────────────── */
+#screen-welcome{align-items:center;justify-content:center;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse 80% 55% at 50% 35%, rgba(34,211,238,.07) 0%, transparent 65%);}
+.welcome-grid{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(34,211,238,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.04) 1px,transparent 1px);
+  background-size:44px 44px;}
+.welcome-glow{position:absolute;top:-200px;left:50%;transform:translateX(-50%);
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(34,211,238,.06) 0%,transparent 70%);pointer-events:none;}
+.welcome-content{text-align:center;max-width:620px;padding:40px 24px;position:relative;z-index:1;}
+.nexus-logo{display:inline-flex;align-items:center;gap:12px;margin-bottom:36px;}
+.nexus-icon{width:50px;height:50px;background:var(--cyan);border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;}
+.nexus-wordmark{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:3px;}
+.nexus-wordmark span{color:var(--cyan);}
+.welcome-hed{font-family:'Syne',sans-serif;font-size:clamp(40px,7.5vw,72px);font-weight:800;line-height:1.04;margin-bottom:20px;}
+.welcome-hed .accent{color:var(--cyan);}
+.welcome-sub{font-size:17px;color:var(--white-dim);line-height:1.65;margin-bottom:44px;max-width:480px;margin-left:auto;margin-right:auto;}
+.welcome-stats{display:flex;justify-content:center;gap:36px;margin-bottom:44px;}
+.ws-num{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--cyan);}
+.ws-lbl{font-size:11px;color:var(--white-dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.welcome-terms{margin-top:18px;font-size:11px;color:var(--white-muted);line-height:1.7;}
+.welcome-terms a{color:var(--white-dim);text-decoration:underline;}
+
+/* ── SCREEN 2: SETUP ────────────────────────────────────────────── */
+#screen-setup{align-items:center;justify-content:center;padding:40px 24px;}
+.setup-card{background:var(--bg-card);border:1px solid var(--border);border-radius:22px;
+  padding:40px;width:100%;max-width:490px;box-shadow:var(--shadow);}
+.setup-title{font-family:'Syne',sans-serif;font-size:27px;font-weight:800;margin-bottom:6px;}
+.setup-sub{font-size:14px;color:var(--white-dim);margin-bottom:32px;}
+.form-group{margin-bottom:24px;}
+.form-label{display:block;font-size:12px;font-weight:600;color:var(--white-dim);
+  margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px;}
+.form-input{width:100%;background:var(--bg-mid);border:1px solid var(--border);
+  border-radius:10px;padding:14px 16px;font-family:'DM Sans',sans-serif;font-size:15px;
+  color:var(--white);outline:none;transition:border-color .2s;}
+.form-input:focus{border-color:var(--cyan);}
+.form-input::placeholder{color:var(--white-muted);}
+.avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.avatar-opt{aspect-ratio:1;border-radius:16px;border:2px solid var(--border);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  font-size:30px;transition:all .2s;background:var(--bg-mid);position:relative;user-select:none;}
+.avatar-opt:hover{border-color:var(--white-dim);}
+.avatar-opt.selected{border-color:var(--cyan);background:var(--cyan-dim);box-shadow:0 0 18px rgba(34,211,238,.2);}
+.avatar-opt.premium.selected{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 18px rgba(245,158,11,.25);}
+.avatar-opt.premium{border-color:rgba(245,158,11,.35);}
+.av-lbl{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--white-dim);}
+.av-badge{position:absolute;top:-8px;right:-8px;background:var(--gold);color:var(--bg);
+  font-size:9px;font-weight:800;padding:2px 7px;border-radius:999px;letter-spacing:.5px;}
+.opt-section{background:var(--bg-mid);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:24px;}
+.opt-row{display:flex;align-items:flex-start;gap:12px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.opt-row:last-child{border-bottom:none;padding-bottom:0;}
+.opt-row:first-child{padding-top:0;}
+.opt-row input[type=checkbox]{width:16px;height:16px;min-width:16px;accent-color:var(--cyan);margin-top:2px;cursor:pointer;}
+.opt-lbl{font-size:12.5px;color:var(--white-dim);line-height:1.5;}
+.opt-lbl strong{color:var(--white);font-weight:500;}
+.setup-decline{text-align:center;margin-top:14px;}
+.setup-decline a{font-size:12px;color:var(--white-muted);text-decoration:underline;cursor:pointer;}
+.setup-decline a:hover{color:var(--white-dim);}
+
+/* ── SCREEN 3: GAMEPLAY ─────────────────────────────────────────── */
+#screen-gameplay{flex-direction:column;}
+.game-header{background:var(--bg-card);border-bottom:1px solid var(--border);
+  padding:0 24px;display:flex;align-items:center;justify-content:space-between;
+  height:64px;position:sticky;top:0;z-index:20;}
+.g-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:2px;}
+.g-logo span{color:var(--cyan);}
+.score-pill{display:flex;align-items:center;gap:10px;background:var(--bg-mid);
+  border:1px solid var(--border);border-radius:10px;padding:10px 18px;}
+.score-lbl{font-size:11px;color:var(--white-dim);text-transform:uppercase;letter-spacing:1px;}
+.score-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--cyan);
+  transition:color .15s;min-width:60px;text-align:right;}
+.score-val.flash{color:var(--green-bright);}
+.rank-pill{display:flex;align-items:center;gap:7px;background:var(--gold-dim);
+  border:1px solid rgba(245,158,11,.3);border-radius:999px;padding:7px 16px;
+  font-size:13px;font-weight:600;color:var(--gold);}
+.game-body{display:grid;grid-template-columns:1fr 295px;gap:24px;
+  padding:24px;flex:1;max-width:1100px;margin:0 auto;width:100%;align-items:start;}
+@media(max-width:768px){.game-body{grid-template-columns:1fr;}.game-sidebar{display:none;}}
+.task-feed{display:flex;flex-direction:column;gap:16px;}
+.feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.feed-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;}
+.feed-sub{font-size:12px;color:var(--white-dim);}
+
+/* Task card */
+.task-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
+  padding:20px;cursor:pointer;transition:all .22s ease;position:relative;overflow:hidden;}
+.task-card:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(34,211,238,.09);}
+.task-card:hover.ai-rec{border-color:rgba(34,211,238,.5);}
+.task-card:hover.urgent-t{border-color:rgba(239,68,68,.5);}
+.task-card:hover.social-t{border-color:rgba(245,158,11,.5);}
+.task-card.ai-rec{border-color:rgba(34,211,238,.3);}
+.task-card.urgent-t{border-color:rgba(239,68,68,.3);}
+.task-card.social-t{border-color:rgba(245,158,11,.25);}
+.task-card.done{opacity:0;transform:scale(.96);pointer-events:none;transition:all .35s ease;}
+.task-card.appearing{animation:card-in .35s cubic-bezier(.34,1.4,.64,1);}
+@keyframes card-in{from{opacity:0;transform:translateY(20px) scale(.97);}to{opacity:1;transform:none;}}
+.tc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:12px;}
+.tc-badges{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.tc-pts{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--green-bright);white-space:nowrap;}
+.tc-pts small{font-size:12px;font-weight:400;color:var(--white-dim);}
+.tc-title{font-size:16px;font-weight:600;margin-bottom:5px;}
+.tc-desc{font-size:13px;color:var(--white-dim);line-height:1.5;margin-bottom:8px;}
+.tc-fine{font-size:10px;color:var(--white-muted);font-style:italic;}
+.tc-timer{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--red);font-weight:600;margin-top:8px;}
+.tdot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.tc-ai-banner{background:var(--cyan-dim);border-top:1px solid rgba(34,211,238,.12);
+  margin:12px -20px -20px;padding:10px 20px;font-size:12px;color:var(--cyan);
+  display:flex;align-items:center;gap:8px;}
+.tc-ai-banner .ais{font-weight:700;}
+.tc-social-banner{background:var(--gold-dim);border-top:1px solid rgba(245,158,11,.12);
+  margin:12px -20px -20px;padding:10px 20px;font-size:12px;color:var(--gold);
+  display:flex;align-items:center;gap:8px;}
+
+/* Points popup */
+.pts-pop{position:fixed;font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
+  color:var(--green-bright);pointer-events:none;z-index:999;
+  text-shadow:0 2px 10px rgba(0,0,0,.6);animation:float-up 1.2s ease forwards;}
+@keyframes float-up{from{transform:translateY(0);opacity:1;}to{transform:translateY(-90px);opacity:0;}}
+
+/* Sidebar */
+.game-sidebar{display:flex;flex-direction:column;gap:16px;position:sticky;top:80px;}
+.sb-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:20px;}
+.sb-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;
+  letter-spacing:1px;color:var(--white-dim);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.lb-row{display:flex;align-items:center;gap:9px;padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);font-size:13px;}
+.lb-row:last-child{border-bottom:none;}
+.lb-rank{width:20px;text-align:center;font-weight:700;font-size:12px;color:var(--white-dim);}
+.lb-rank.gold{color:var(--gold);}
+.lb-em{font-size:18px;}
+.lb-name{flex:1;font-size:13px;}
+.lb-name.you{color:var(--cyan);font-weight:600;}
+.lb-pts{font-weight:700;font-size:13px;color:var(--green-bright);}
+.ai-box{background:var(--cyan-dim);border-radius:10px;padding:14px;}
+.ai-box-hd{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;
+  color:var(--cyan);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.ai-box p{font-size:12.5px;color:var(--white-dim);line-height:1.55;}
+.ai-box strong{color:var(--white);}
+.prog-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--white-dim);margin-bottom:7px;}
+.prog-bar{height:7px;background:var(--bg-mid);border-radius:999px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:999px;transition:width .5s ease;}
+.prog-tier{font-size:11px;color:var(--white-dim);margin-top:6px;}
+.prog-tier strong{color:var(--gold);}
+
+/* Notifications */
+.toast-wrap{position:fixed;top:76px;right:18px;z-index:100;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
+  padding:12px 16px;font-size:13px;max-width:270px;box-shadow:var(--shadow);line-height:1.5;
+  animation:toast-in .3s ease;}
+@keyframes toast-in{from{transform:translateX(40px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast.out{animation:toast-out .3s ease forwards;}
+@keyframes toast-out{to{transform:translateX(40px);opacity:0;}}
+
+/* Wave 2 banner */
+.wave-banner{margin:8px 0 4px;padding:12px 18px;background:rgba(245,158,11,.08);
+  border:1px solid rgba(245,158,11,.25);border-radius:12px;
+  font-size:13px;color:var(--gold);display:flex;align-items:center;gap:10px;}
+
+/* ── MODAL: ESCALATION ─────────────────────────────────────────── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(7,9,15,.88);
+  backdrop-filter:blur(8px);z-index:200;align-items:center;justify-content:center;padding:24px;}
+.overlay.show{display:flex;}
+.esc-modal{background:var(--bg-card);border:1px solid rgba(245,158,11,.45);
+  border-radius:24px;padding:40px;max-width:500px;width:100%;
+  box-shadow:0 0 70px rgba(245,158,11,.18),var(--shadow);position:relative;
+  animation:modal-pop .38s cubic-bezier(.34,1.5,.64,1);}
+@keyframes modal-pop{from{opacity:0;transform:scale(.85) translateY(24px);}to{opacity:1;transform:none;}}
+.esc-chip{display:inline-flex;align-items:center;gap:6px;background:var(--gold-dim);
+  border:1px solid rgba(245,158,11,.4);border-radius:999px;padding:6px 16px;
+  font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
+.esc-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:8px;text-align:center;}
+.esc-sub{font-size:14px;color:var(--white-dim);line-height:1.6;text-align:center;margin-bottom:20px;}
+.esc-sub strong{color:var(--cyan);}
+.esc-timer{text-align:center;margin-bottom:20px;}
+.esc-time-val{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;color:var(--red);line-height:1;}
+.esc-time-lbl{font-size:11px;color:var(--white-dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+.esc-perks{background:var(--bg-mid);border-radius:12px;padding:16px;margin-bottom:18px;}
+.esc-perk{display:flex;align-items:center;gap:10px;font-size:14px;padding:5px 0;}
+.pk-ic{font-size:18px;}
+.esc-optin{display:flex;align-items:flex-start;gap:10px;padding:12px;
+  background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.1);
+  border-radius:10px;margin-bottom:20px;font-size:12px;color:var(--white-dim);}
+.esc-optin input{min-width:16px;height:16px;accent-color:var(--cyan);margin-top:2px;cursor:pointer;}
+.esc-actions{display:flex;flex-direction:column;gap:10px;align-items:center;}
+.esc-decline{font-size:12px;color:var(--white-muted);background:none;border:none;
+  cursor:pointer;text-decoration:underline;padding:4px;font-family:'DM Sans',sans-serif;}
+.esc-decline:hover{color:var(--white-dim);}
+.confirm-box{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;
+  padding:36px;max-width:380px;width:100%;text-align:center;animation:modal-pop .28s ease;}
+.confirm-box h3{font-family:'Syne',sans-serif;font-size:21px;font-weight:700;margin-bottom:12px;}
+.confirm-box p{font-size:14px;color:var(--white-dim);margin-bottom:24px;line-height:1.6;}
+.confirm-acts{display:flex;gap:12px;justify-content:center;}
+
+/* ── SCREEN 4: SCORE ────────────────────────────────────────────── */
+#screen-score{align-items:center;padding:40px 24px;
+  background:radial-gradient(ellipse 70% 45% at 50% 10%, rgba(34,211,238,.06) 0%, transparent 60%);}
+.score-wrap{max-width:700px;width:100%;}
+.score-hero{text-align:center;margin-bottom:44px;}
+.trophy-em{font-size:68px;display:block;margin-bottom:14px;animation:trophy-bounce .6s .2s cubic-bezier(.34,1.7,.64,1) both;}
+@keyframes trophy-bounce{from{transform:scale(0) rotate(-15deg);}to{transform:scale(1) rotate(0);}}
+.score-hed{font-family:'Syne',sans-serif;font-size:clamp(26px,5vw,46px);font-weight:800;margin-bottom:10px;}
+.score-rank-chip{display:inline-block;background:var(--cyan-dim);border:1px solid rgba(34,211,238,.3);
+  border-radius:999px;padding:6px 22px;font-size:14px;color:var(--cyan);font-weight:600;margin-bottom:24px;}
+.score-big{font-family:'Syne',sans-serif;font-size:80px;font-weight:800;color:var(--green-bright);line-height:1;}
+.score-big-lbl{font-size:14px;color:var(--white-dim);margin-top:6px;}
+.breakdown{display:flex;gap:16px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+.bk-item{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px 20px;text-align:center;min-width:120px;}
+.bk-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+.bk-lbl{font-size:11px;color:var(--white-dim);margin-top:2px;}
+.reveal-wrap{text-align:center;margin:32px 0;}
+.reveal-btn{background:none;border:1px solid var(--border);border-radius:10px;padding:14px 24px;
+  color:var(--white-dim);font-family:'DM Sans',sans-serif;font-size:15px;cursor:pointer;
+  transition:all .2s;display:inline-flex;align-items:center;gap:9px;}
+.reveal-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.dp-reveal{display:none;}
+.dp-reveal.vis{display:block;}
+.dp-reveal-hd{text-align:center;margin-bottom:30px;}
+.dp-reveal-hd h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:8px;}
+.dp-reveal-hd p{color:var(--white-dim);font-size:14px;line-height:1.6;}
+.dp-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
+  padding:24px;margin-bottom:14px;animation:fade-up .4s ease backwards;}
+@keyframes fade-up{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+.dp-hd{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+.dp-ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.dp-ic.urg{background:var(--red-dim);}
+.dp-ic.soc{background:var(--gold-dim);}
+.dp-ic.mis{background:var(--cyan-dim);}
+.dp-ic.rmo{background:rgba(168,85,247,.13);}
+.dp-ic.shm{background:rgba(236,72,153,.13);}
+.dp-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:2px;}
+.dp-cat{font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:700;}
+.dp-cat.urg{color:var(--red);}
+.dp-cat.soc{color:var(--gold);}
+.dp-cat.mis{color:var(--cyan);}
+.dp-cat.rmo{color:var(--purple);}
+.dp-cat.shm{color:var(--pink);}
+.dp-where{font-size:12px;color:var(--white-dim);background:var(--bg-mid);border-radius:8px;
+  padding:8px 12px;margin-bottom:10px;font-style:italic;}
+.dp-text{font-size:13.5px;color:var(--white-dim);line-height:1.65;}
+.dp-text strong{color:var(--white);}
+.score-footer{text-align:center;margin-top:40px;padding-top:30px;border-top:1px solid var(--border);}
+.score-footer p{font-size:14px;color:var(--white-dim);margin-bottom:16px;}
+</style>
+</head>
+<body>
+
+<!-- ── SCREEN 1: WELCOME ───────────────────────────────────────── -->
+<div id="screen-welcome" class="screen">
+  <div class="welcome-grid"></div>
+  <div class="welcome-glow"></div>
+  <div class="welcome-content">
+    <div class="nexus-logo">
+      <div class="nexus-icon">⚡</div>
+      <div class="nexus-wordmark">NEXUS<span>POINTS</span></div>
+    </div>
+    <h1 class="welcome-hed">Compete.<br><span class="accent">Earn. Dominate.</span></h1>
+    <p class="welcome-sub">Join 1,247 active players competing in today's performance challenge. Complete tasks, follow AI guidance, and climb the leaderboard in real time.</p>
+    <div class="welcome-stats">
+      <div><div class="ws-num">1,247</div><div class="ws-lbl">Active Players</div></div>
+      <div><div class="ws-num">8,400</div><div class="ws-lbl">Avg Score</div></div>
+      <div><div class="ws-num">⚡ LIVE</div><div class="ws-lbl">Right Now</div></div>
+    </div>
+    <button class="btn btn-primary" onclick="showScreen('setup')" style="font-size:16px;padding:16px 36px;">
+      🚀 Start the Challenge
+    </button>
+    <div class="welcome-terms">
+      By continuing you agree to our <a href="#">Terms of Service</a> and <a href="#">Personalized Experience Policy</a>.<br>
+      Your activity data helps us optimize your recommendations.
+    </div>
+  </div>
+</div>
+
+<!-- ── SCREEN 2: SETUP ─────────────────────────────────────────── -->
+<div id="screen-setup" class="screen">
+  <div class="setup-card" style="margin:auto;">
+    <div class="setup-title">Set Up Your Profile</div>
+    <div class="setup-sub">Personalize your challenge experience before you begin.</div>
+    <div class="form-group">
+      <label class="form-label" for="nickname">Your Nickname</label>
+      <input class="form-input" id="nickname" type="text" placeholder="Enter a nickname..." maxlength="20">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Choose Your Avatar</label>
+      <div class="avatar-grid">
+        <div class="avatar-opt" data-av="0" data-em="🦅" onclick="selectAvatar(this)">
+          🦅<div class="av-lbl">Eagle</div>
+        </div>
+        <div class="avatar-opt" data-av="1" data-em="🐯" onclick="selectAvatar(this)">
+          🐯<div class="av-lbl">Tiger</div>
+        </div>
+        <div class="avatar-opt premium selected" data-av="2" data-em="⚡" onclick="selectAvatar(this)">
+          ⚡<div class="av-lbl">APEX</div>
+          <div class="av-badge">★ TOP</div>
+        </div>
+        <div class="avatar-opt" data-av="3" data-em="🦊" onclick="selectAvatar(this)">
+          🦊<div class="av-lbl">Fox</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Performance Preferences</label>
+      <div class="opt-section">
+        <div class="opt-row">
+          <input type="checkbox" id="opt-recs" checked>
+          <label for="opt-recs" class="opt-lbl"><strong>Enable AI-Powered Recommendations & Score Coaching</strong> — let our system guide your optimal task selection</label>
+        </div>
+        <div class="opt-row">
+          <input type="checkbox" id="opt-news" checked>
+          <label for="opt-news" class="opt-lbl"><strong>Join the NEXUS Insider Newsletter</strong> — weekly performance tips, leaderboard recaps, and exclusive challenges</label>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;font-size:16px;padding:16px;" onclick="startGame()">
+      Begin Challenge →
+    </button>
+    <div class="setup-decline">
+      <a onclick="startGame()">basic mode (limited features)</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCREEN 3: GAMEPLAY ──────────────────────────────────────── -->
+<div id="screen-gameplay" class="screen" style="background:var(--bg);">
+  <div class="game-header">
+    <div class="g-logo">NEXUS<span>POINTS</span></div>
+    <div class="score-pill">
+      <span class="score-lbl">Score</span>
+      <span class="score-val" id="score-display">0</span>
+    </div>
+    <div class="rank-pill" id="rank-pill">🏆 Rank <span id="rank-num">#4</span></div>
+  </div>
+  <div class="game-body">
+    <!-- Task feed -->
+    <div>
+      <div class="feed-header">
+        <div class="feed-title" id="feed-title">Available Tasks</div>
+        <div class="feed-sub" id="feed-sub">Complete tasks to earn points</div>
+      </div>
+      <div id="wave-banner" class="wave-banner" style="display:none;">
+        ⚡ <strong>PHASE 2 UNLOCKED</strong> — High-value tasks now available. Sprint to the finish!
+      </div>
+      <div id="task-feed" class="task-feed" style="margin-top:16px;"></div>
+    </div>
+    <!-- Sidebar -->
+    <div class="game-sidebar">
+      <!-- Leaderboard -->
+      <div class="sb-card">
+        <div class="sb-title">🏆 Live Leaderboard</div>
+        <div id="leaderboard"></div>
+      </div>
+      <!-- AI Insight -->
+      <div class="sb-card">
+        <div class="sb-title">🤖 AI Coach</div>
+        <div class="ai-box">
+          <div class="ai-box-hd">⚡ Insight</div>
+          <p id="ai-insight-text">Analyzing your performance profile...</p>
+        </div>
+      </div>
+      <!-- Progress -->
+      <div class="sb-card">
+        <div class="sb-title">📈 Progress</div>
+        <div class="prog-lbl"><span>Performance Tier</span><span id="prog-pct">0%</span></div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="prog-tier" id="prog-tier">Next: <strong>Silver Tier</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ESCALATION MODAL ────────────────────────────────────────── -->
+<div id="modal-esc" class="overlay">
+  <div class="esc-modal">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div class="esc-chip">🔥 Exclusive Offer</div>
+      <div class="esc-title">You've Been Selected!</div>
+      <div class="esc-sub">You're in the <strong>top 12%</strong> of today's players. Unlock <strong>APEX MODE</strong> for a massive score boost — available for a limited time only.</div>
+    </div>
+    <div class="esc-timer">
+      <div class="esc-time-val" id="esc-countdown">1:00</div>
+      <div class="esc-time-lbl">Offer expires in</div>
+    </div>
+    <div class="esc-perks">
+      <div class="esc-perk"><span class="pk-ic">🚀</span> <span><strong>3× point multiplier</strong> on all remaining tasks</span></div>
+      <div class="esc-perk"><span class="pk-ic">⚡</span> <span><strong>Exclusive APEX missions</strong> not visible to others</span></div>
+      <div class="esc-perk"><span class="pk-ic">🏆</span> <span><strong>Guaranteed top-10 leaderboard</strong> placement badge</span></div>
+      <div class="esc-perk"><span class="pk-ic">🎯</span> <span><strong>Personalized AI strategy</strong> tailored to your profile</span></div>
+    </div>
+    <div class="esc-optin">
+      <input type="checkbox" id="apex-newsletter" checked>
+      <label for="apex-newsletter">Include me in the APEX Weekly Performance Report with exclusive strategies and early challenge access</label>
+    </div>
+    <div class="esc-actions">
+      <button class="btn btn-gold" style="width:100%;" onclick="acceptApex()">
+        ⚡ Activate APEX MODE — FREE
+      </button>
+      <button class="esc-decline" onclick="showConfirm()">No thanks, I prefer to stay behind</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONFIRM DECLINE MODAL ───────────────────────────────────── -->
+<div id="modal-confirm" class="overlay">
+  <div class="confirm-box">
+    <h3>⚠️ Wait — Are You Sure?</h3>
+    <p>You've already earned <strong id="confirm-score">0</strong> pts. Activating APEX MODE could <strong>triple your final score</strong>. Other players are already activating it now.</p>
+    <div class="confirm-acts">
+      <button class="btn btn-gold" onclick="acceptApex()">Actually, keep my bonus</button>
+      <button class="btn btn-ghost" onclick="declineApex()">Yes, I'll miss out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCREEN 4: SCORE ─────────────────────────────────────────── -->
+<div id="screen-score" class="screen" style="min-height:100vh;">
+  <div class="score-wrap" style="margin:auto;">
+    <div class="score-hero">
+      <span class="trophy-em">🏆</span>
+      <div class="score-hed" id="score-hed">Challenge Complete!</div>
+      <div class="score-rank-chip" id="score-rank-chip">You finished in the top 9%</div>
+      <div class="score-big" id="score-final">0</div>
+      <div class="score-big-lbl">Total Points Earned</div>
+      <div class="breakdown">
+        <div class="bk-item"><div class="bk-num" id="bk-tasks">0</div><div class="bk-lbl">Tasks Completed</div></div>
+        <div class="bk-item"><div class="bk-num" id="bk-apex">—</div><div class="bk-lbl">APEX Bonus</div></div>
+        <div class="bk-item"><div class="bk-num" id="bk-rank">—</div><div class="bk-lbl">Final Rank</div></div>
+      </div>
+    </div>
+    <div class="reveal-wrap">
+      <button class="reveal-btn" onclick="revealDarkPatterns()">
+        🔍 What just happened? Reveal the dark patterns
+      </button>
+    </div>
+    <div class="dp-reveal" id="dp-reveal">
+      <div class="dp-reveal-hd">
+        <h2>🎭 Dark Patterns Used in This Game</h2>
+        <p>Everything below was intentionally designed to manipulate your decisions. This is what those techniques looked like — and why they worked.</p>
+      </div>
+      <!-- DP cards injected by JS -->
+      <div id="dp-cards"></div>
+      <div class="score-footer">
+        <p>This game was built to let you experience manipulative UX design firsthand. These techniques are common in real apps — social media, e-commerce, subscriptions, and mobile games.</p>
+        <button class="btn btn-primary" onclick="restartGame()">Play Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+// ── GAME STATE ──────────────────────────────────────────────────
+const G = {
+  nickname: '',
+  avatarEmoji: '⚡',
+  score: 0,
+  tasksCompleted: 0,
+  wave: 1,
+  apexAccepted: false,
+  escShown: false,
+  escInterval: null,
+  escSecs: 60,
+  taskTimers: {},
+  fakeRank: 4,
+  darkPatternsHit: new Set(),
+  aiRecsClicked: 0,
+  urgentClicked: 0,
+  leaderboardInterval: null,
+  notifQueue: [],
+  notifTimeout: null,
+};
+
+// Fake leaderboard players
+const FAKE_PLAYERS = [
+  { name:'Alex M.', em:'🦅' },
+  { name:'Jordan K.', em:'🐯' },
+  { name:'Sam R.', em:'🦁' },
+  { name:'Riley P.', em:'🐺' },
+  { name:'Chris T.', em:'🦊' },
+  { name:'Morgan L.', em:'🦋' },
+];
+
+// Fake leaderboard scores (adjust around player)
+let fakeScores = [0,0,0,0,0,0];
+
+// AI Insight messages
+const AI_INSIGHTS = [
+  'Based on your activity pattern, players who select <strong>AI-recommended tasks</strong> earn 47% more points on average.',
+  'Our model predicts you\'re on track for <strong>top 10%</strong>. Keep following system recommendations.',
+  'High performers in your tier complete <strong>speed bonus tasks first</strong> — they yield the highest point density.',
+  'Your profile score suggests you have <strong>untapped potential</strong> in challenge rounds. Don\'t miss them!',
+  'Players who accepted APEX MODE earned <strong>2.8× more</strong> than those who declined.',
+];
+
+// Notifications
+const NOTIFS = [
+  '🏆 Jordan K. just jumped to #2!',
+  '⚡ You\'re climbing! You\'re now ranked #4 of 1,247',
+  '🔥 3 players are closing in on your score — act fast!',
+  '💡 AI Coach: You\'re on track for top 10%. Keep going!',
+  '⏱ Challenge window closing in 2 minutes!',
+  '🚀 Alex M. just completed a speed bonus — gained 120 pts',
+  '⚡ APEX players are pulling ahead on the leaderboard!',
+];
+
+// ── TASK POOL ────────────────────────────────────────────────────
+const TASK_POOL = [
+  // Wave 1
+  { id:'t1', title:'Daily Check-In', desc:'Log your daily performance status to earn base points.', pts:30, wave:1, type:'normal' },
+  { id:'t2', title:'Profile Optimizer', desc:'Allow our system to analyze and optimize your performance profile.', pts:90, wave:1, type:'ai', aiStat:'93% of top performers chose this', dp:'social' },
+  { id:'t3', title:'Quick Survey', desc:'Answer 3 short questions about your experience so far.', pts:55, wave:1, type:'normal' },
+  { id:'t4', title:'Speed Bonus Round', desc:'Complete a rapid micro-challenge for a major point boost!', pts:120, wave:1, type:'urgent', urgentSecs:45, dp:'urgency', fine:'*Bonus subject to verification. Points credited within 24–48 hrs.' },
+  { id:'t5', title:'Community Challenge', desc:'A team-based task already completed by hundreds today.', pts:70, wave:1, type:'social', socialStat:'847 players completed this today', dp:'social' },
+  // Wave 2
+  { id:'t6', title:'⚡ APEX: Priority Mission', desc:'Exclusive APEX mission — triple-multiplied points, only for APEX players.', pts:200, ptsApex:400, wave:2, type:'urgent', urgentSecs:30, dp:'urgency' },
+  { id:'t7', title:'Leaderboard Sprint', desc:'Final push to lock in your ranking before the challenge closes.', pts:150, wave:2, type:'ai', aiStat:'Top performers are finishing this NOW', dp:'social' },
+  { id:'t8', title:'Score Lock Challenge', desc:'Secure your cumulative performance bonus before rankings freeze.', pts:100, wave:2, type:'urgent', urgentSecs:75, dp:'urgency', fine:'*Act fast — leaderboard freezes at end of session.' },
+  { id:'t9', title:'Final Multiplier', desc:'Lock in your end-of-game score multiplier for maximum output.', pts:80, wave:2, type:'normal' },
+];
+
+let availableTasks = [];
+let shownTaskIds = new Set();
+
+// ── SCREEN TRANSITIONS ───────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active','visible');
+  });
+  const el = document.getElementById('screen-'+id);
+  el.classList.add('active');
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
+}
+
+// ── AVATAR SELECTION ─────────────────────────────────────────────
+function selectAvatar(el) {
+  document.querySelectorAll('.avatar-opt').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  G.avatarEmoji = el.dataset.em;
+}
+
+// ── START GAME ────────────────────────────────────────────────────
+function startGame() {
+  const nick = document.getElementById('nickname').value.trim();
+  G.nickname = nick || 'Player';
+  G.avatarEmoji = document.querySelector('.avatar-opt.selected')?.dataset?.em || '⚡';
+  localStorage.setItem('nexus-nickname', G.nickname);
+  showScreen('gameplay');
+  initGameplay();
+}
+
+// ── INIT GAMEPLAY ─────────────────────────────────────────────────
+function initGameplay() {
+  G.score = 0;
+  G.tasksCompleted = 0;
+  G.wave = 1;
+  G.apexAccepted = false;
+  G.escShown = false;
+  G.fakeRank = 4;
+  G.darkPatternsHit = new Set();
+  G.aiRecsClicked = 0;
+  G.urgentClicked = 0;
+  availableTasks = TASK_POOL.filter(t => t.wave === 1);
+  shownTaskIds = new Set();
+
+  updateScoreDisplay();
+  renderLeaderboard();
+  renderTasks();
+  startLeaderboardUpdates();
+  startAIInsights();
+  scheduleNotifs();
+}
+
+// ── RENDER TASKS ──────────────────────────────────────────────────
+function renderTasks() {
+  const feed = document.getElementById('task-feed');
+  const pool = availableTasks.filter(t => !shownTaskIds.has(t.id));
+  const toShow = pool.slice(0, 3);
+  if (toShow.length === 0) return;
+  toShow.forEach(t => {
+    shownTaskIds.add(t.id);
+    const card = buildTaskCard(t);
+    feed.appendChild(card);
+  });
+}
+
+function buildTaskCard(task) {
+  const div = document.createElement('div');
+  div.className = 'task-card appearing' + (task.type==='ai'?' ai-rec':task.type==='urgent'?' urgent-t':task.type==='social'?' social-t':'');
+  div.id = 'tc-'+task.id;
+
+  const pts = (G.apexAccepted && task.ptsApex) ? task.ptsApex : task.pts;
+
+  let badgesHTML = '';
+  if (task.type === 'ai') badgesHTML += '<span class="badge badge-ai">⚡ AI Recommends</span>';
+  if (task.type === 'urgent') badgesHTML += '<span class="badge badge-urgent">⏱ Expires Soon</span>';
+  if (task.type === 'social') badgesHTML += '<span class="badge badge-social">👥 Popular</span>';
+
+  let timerHTML = '';
+  if (task.urgentSecs) {
+    timerHTML = `<div class="tc-timer"><div class="tdot"></div><span id="timer-${task.id}">${fmtSecs(task.urgentSecs)}</span> remaining</div>`;
+  }
+  let fineHTML = task.fine ? `<div class="tc-fine">${task.fine}</div>` : '';
+  let bannerHTML = '';
+  if (task.type === 'ai') {
+    bannerHTML = `<div class="tc-ai-banner">🤖 <span class="ais">AI Coach:</span> <span>${task.aiStat}</span></div>`;
+  } else if (task.type === 'social') {
+    bannerHTML = `<div class="tc-social-banner">👥 ${task.socialStat}</div>`;
+  }
+
+  div.innerHTML = `
+    <div class="tc-top">
+      <div class="tc-badges">${badgesHTML}</div>
+      <div class="tc-pts">+${pts}<small> pts</small></div>
+    </div>
+    <div class="tc-title">${task.title}</div>
+    <div class="tc-desc">${task.desc}</div>
+    ${fineHTML}
+    ${timerHTML}
+    ${bannerHTML}
+  `;
+  div.addEventListener('click', () => completeTask(task, div));
+
+  // Start countdown if urgent
+  if (task.urgentSecs) startTaskTimer(task);
+  return div;
+}
+
+function fmtSecs(s) {
+  const m = Math.floor(s/60);
+  const sc = s%60;
+  return m+':'+(sc<10?'0':'')+sc;
+}
+
+function startTaskTimer(task) {
+  let secs = task.urgentSecs;
+  G.taskTimers[task.id] = setInterval(() => {
+    secs--;
+    const el = document.getElementById('timer-'+task.id);
+    if (el) el.textContent = fmtSecs(Math.max(0, secs));
+    if (secs <= 0) {
+      clearInterval(G.taskTimers[task.id]);
+      // Dark pattern: timer hits 0 but task doesn't actually disappear
+      // Card gets urgent styling but remains clickable
+      const card = document.getElementById('tc-'+task.id);
+      if (card) {
+        card.style.opacity = '0.7';
+        const timerEl = card.querySelector('.tc-timer');
+        if (timerEl) timerEl.innerHTML = '<div class="tdot"></div><span style="color:var(--red)">EXPIRED</span>';
+      }
+    }
+  }, 1000);
+}
+
+// ── COMPLETE TASK ─────────────────────────────────────────────────
+function completeTask(task, cardEl) {
+  if (cardEl.classList.contains('done')) return;
+  clearInterval(G.taskTimers[task.id]);
+
+  // Track dark pattern interaction
+  if (task.dp) G.darkPatternsHit.add(task.dp);
+  if (task.type === 'ai') G.aiRecsClicked++;
+  if (task.type === 'urgent') G.urgentClicked++;
+
+  const pts = (G.apexAccepted && task.ptsApex) ? task.ptsApex : task.pts;
+  G.score += pts;
+  G.tasksCompleted++;
+
+  // Animate card out
+  cardEl.classList.add('done');
+
+  // Float points
+  showPtsPopup('+'+pts, cardEl);
+
+  // Update score
+  setTimeout(() => {
+    updateScoreDisplay();
+    updateProgress();
+    updateFakeLeaderboard();
+  }, 200);
+
+  // Check if we need escalation (after 3 wave-1 tasks)
+  if (G.wave === 1 && G.tasksCompleted >= 3 && !G.escShown) {
+    setTimeout(() => showEscalation(), 700);
+    return;
+  }
+
+  // Check if game is over (wave 2, 3+ tasks completed post-escalation)
+  if (G.wave === 2 && G.tasksCompleted >= 7) {
+    setTimeout(() => endGame(), 800);
+    return;
+  }
+
+  // Slide in next task after a moment
+  setTimeout(() => {
+    cardEl.remove();
+    renderNextTask();
+  }, 450);
+}
+
+function renderNextTask() {
+  const pool = availableTasks.filter(t => !shownTaskIds.has(t.id));
+  if (pool.length === 0) {
+    // Check if we should end
+    const feed = document.getElementById('task-feed');
+    if (feed.children.length === 0) {
+      endGame();
+    }
+    return;
+  }
+  const task = pool[0];
+  shownTaskIds.add(task.id);
+  const feed = document.getElementById('task-feed');
+  const card = buildTaskCard(task);
+  feed.appendChild(card);
+}
+
+// ── SHOW ESCALATION ───────────────────────────────────────────────
+function showEscalation() {
+  G.escShown = true;
+  G.escSecs = 60;
+  G.darkPatternsHit.add('urgency');
+  G.darkPatternsHit.add('roachmotel');
+  G.darkPatternsHit.add('confirmshame');
+  document.getElementById('confirm-score').textContent = G.score;
+  document.getElementById('modal-esc').classList.add('show');
+  updateEscCountdown();
+  G.escInterval = setInterval(() => {
+    G.escSecs--;
+    updateEscCountdown();
+    if (G.escSecs <= 0) {
+      clearInterval(G.escInterval);
+      // Dark pattern: timer hits 0 but offer doesn't disappear
+    }
+  }, 1000);
+}
+
+function updateEscCountdown() {
+  const m = Math.floor(G.escSecs/60);
+  const s = G.escSecs % 60;
+  const el = document.getElementById('esc-countdown');
+  if (el) {
+    el.textContent = m+':'+(s<10?'0':'')+s;
+    if (G.escSecs <= 10) el.style.animation = 'pulse-badge 0.8s infinite';
+  }
+}
+
+function showConfirm() {
+  G.darkPatternsHit.add('confirmshame');
+  document.getElementById('confirm-score').textContent = G.score;
+  document.getElementById('modal-confirm').classList.add('show');
+}
+
+function acceptApex() {
+  G.apexAccepted = true;
+  G.darkPatternsHit.add('roachmotel');
+  clearInterval(G.escInterval);
+  document.getElementById('modal-esc').classList.remove('show');
+  document.getElementById('modal-confirm').classList.remove('show');
+  startWave2(true);
+}
+
+function declineApex() {
+  clearInterval(G.escInterval);
+  document.getElementById('modal-esc').classList.remove('show');
+  document.getElementById('modal-confirm').classList.remove('show');
+  startWave2(false);
+}
+
+function startWave2(isApex) {
+  G.wave = 2;
+  availableTasks = TASK_POOL.filter(t => t.wave === 2);
+  shownTaskIds = new Set();
+
+  const feed = document.getElementById('task-feed');
+  feed.innerHTML = '';
+
+  document.getElementById('feed-title').textContent = isApex ? '⚡ APEX Tasks' : 'Phase 2 Tasks';
+  document.getElementById('feed-sub').textContent = isApex ? '3× multiplier active on APEX missions' : 'Final phase — finish strong';
+
+  const banner = document.getElementById('wave-banner');
+  banner.style.display = 'flex';
+
+  if (isApex) {
+    toast('🚀 APEX MODE activated! Bonus multiplier is live.', 5000);
+    G.darkPatternsHit.add('social');
+  } else {
+    toast('📊 Continuing to Phase 2...', 3500);
+  }
+
+  updateAIInsight(4);
+  setTimeout(renderTasks, 400);
+}
+
+// ── END GAME ──────────────────────────────────────────────────────
+function endGame() {
+  // Stop all intervals
+  Object.values(G.taskTimers).forEach(t => clearInterval(t));
+  clearInterval(G.leaderboardInterval);
+
+  showScreen('score');
+
+  document.getElementById('score-final').textContent = G.score.toLocaleString();
+  document.getElementById('bk-tasks').textContent = G.tasksCompleted;
+  document.getElementById('bk-apex').textContent = G.apexAccepted ? '✓ Active' : '✗ Declined';
+  document.getElementById('bk-rank').textContent = '#'+G.fakeRank+' / 1,247';
+
+  // Comparative rank framing (always flattering)
+  const topPct = G.fakeRank <= 3 ? '4' : G.fakeRank <= 5 ? '9' : '15';
+  document.getElementById('score-rank-chip').textContent = `You finished in the top ${topPct}% of all players`;
+  document.getElementById('score-hed').textContent = G.nickname ? `Well done, ${G.nickname}!` : 'Challenge Complete!';
+}
+
+// ── DARK PATTERN REVEAL ────────────────────────────────────────────
+function revealDarkPatterns() {
+  document.getElementById('dp-reveal').classList.add('vis');
+  document.querySelector('.reveal-wrap').style.display = 'none';
+  const container = document.getElementById('dp-cards');
+  const dps = buildDPCards();
+  dps.forEach((dp, i) => {
+    dp.style.animationDelay = (i * 0.12)+'s';
+    container.appendChild(dp);
+  });
+  setTimeout(() => container.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+function buildDPCards() {
+  const defs = [
+    {
+      cls:'urg', em:'⏱', name:'Fake Urgency',
+      cat:'Urgency-Based Dark Pattern',
+      where:'Countdown timers on task cards, the APEX MODE offer timer',
+      text:`Those countdown timers were <strong>not real</strong>. Tasks marked "Expires Soon" never actually disappeared — they just turned red and said "EXPIRED" but remained fully clickable. The APEX MODE offer had a 60-second timer, but the offer would have stayed indefinitely. <strong>Urgency cues trigger loss aversion</strong>, a cognitive bias that makes potential losses feel more significant than equivalent gains, pushing you to act before thinking.`
+    },
+    {
+      cls:'soc', em:'🤖', name:'False Authority & Fake Social Proof',
+      cat:'Social Proof / Authority Dark Pattern',
+      where:'"AI Recommends" badges, leaderboard stats, "847 players completed this today"',
+      text:`There was <strong>no real AI</strong>. The "AI Coach" recommendations were predetermined. The leaderboard was fabricated — it kept you near #4 regardless of your score. "93% of top performers chose this" and "847 players completed this today" were invented numbers. <strong>Social proof</strong> exploits our tendency to assume that what others do must be correct, making you more likely to follow "recommendations."`,
+    },
+    {
+      cls:'mis', em:'☑️', name:'Pre-Selected Opt-Ins',
+      cat:'Misdirection / Interface Dark Pattern',
+      where:'Setup screen — newsletter and recommendations checkboxes',
+      text:`Both checkboxes on the setup screen were <strong>pre-checked for you</strong>. The AI recommendations opt-in and the newsletter subscription were on by default — requiring active effort to uncheck them. Most users don't read everything carefully, so pre-checked boxes dramatically increase opt-in rates. This is a well-documented dark pattern used by apps and websites to build marketing lists without genuine consent.`,
+    },
+    {
+      cls:'shm', em:'😬', name:'Confirm-Shaming',
+      cat:'Interaction / Misdirection Dark Pattern',
+      where:'The APEX MODE decline button: "No thanks, I prefer to stay behind"',
+      text:`The decline button on the APEX offer didn't say "No thanks" or "Decline." It said <strong>"No thanks, I prefer to stay behind"</strong> — language deliberately crafted to make declining feel like an admission of failure or weakness. The follow-up confirm dialog offered "Actually, keep my bonus" vs "Yes, I'll miss out." <strong>Confirm-shaming</strong> uses emotional language to make opting out psychologically uncomfortable.`,
+    },
+    {
+      cls:'rmo', em:'🪤', name:'Roach Motel',
+      cat:'Interaction Dark Pattern',
+      where:'APEX MODE activation vs. declining — asymmetric effort design',
+      text:`Activating APEX MODE took <strong>one big gold button click</strong>. Declining required: (1) finding the small gray text link, (2) reading a confirm dialog designed to make you change your mind, and (3) clicking a shaming decline button. The ease of one path vs. the friction of the other is a "Roach Motel" — <strong>easy to get in, hard to get out</strong>. This asymmetry is common in subscription sign-up flows and free trials.`,
+    },
+    {
+      cls:'mis', em:'⭐', name:'Pre-Selected "Premium" Avatar',
+      cat:'Interface Default Dark Pattern',
+      where:'Avatar selection on setup screen — the APEX (★ TOP) avatar was pre-selected',
+      text:`On the avatar selection screen, the <strong>"APEX" avatar was selected by default</strong> — and it had a "★ TOP" badge, making it look like the recommended or premium choice. This is a default selection dark pattern: <strong>pre-selecting the option that benefits the designer</strong> (in this case, reinforcing the "premium" APEX theme) rather than the one most neutral for the user. Many users never change defaults.`,
+    },
+  ];
+
+  return defs.map(dp => {
+    const el = document.createElement('div');
+    el.className = 'dp-card';
+    el.innerHTML = `
+      <div class="dp-hd">
+        <div class="dp-ic ${dp.cls}">${dp.em}</div>
+        <div>
+          <div class="dp-name">${dp.name}</div>
+          <div class="dp-cat ${dp.cls}">${dp.cat}</div>
+        </div>
+      </div>
+      <div class="dp-where">📍 Where: ${dp.where}</div>
+      <div class="dp-text">${dp.text}</div>
+    `;
+    return el;
+  });
+}
+
+// ── SCORE & UI UPDATES ─────────────────────────────────────────────
+function updateScoreDisplay() {
+  const el = document.getElementById('score-display');
+  el.textContent = G.score.toLocaleString();
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 300);
+}
+
+function updateProgress() {
+  const pct = Math.min(95, Math.round((G.score / 1000) * 100));
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-pct').textContent = pct+'%';
+  if (pct < 30) document.getElementById('prog-tier').innerHTML = 'Next: <strong>Silver Tier</strong>';
+  else if (pct < 60) document.getElementById('prog-tier').innerHTML = 'Next: <strong>Gold Tier</strong>';
+  else document.getElementById('prog-tier').innerHTML = 'Next: <strong>APEX Tier</strong>';
+}
+
+function showPtsPopup(text, cardEl) {
+  const rect = cardEl.getBoundingClientRect();
+  const el = document.createElement('div');
+  el.className = 'pts-pop';
+  el.textContent = text;
+  el.style.left = (rect.left + rect.width/2 - 30) + 'px';
+  el.style.top = (rect.top + rect.height/2) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+}
+
+// ── FAKE LEADERBOARD ───────────────────────────────────────────────
+function updateFakeLeaderboard() {
+  // Keep player at rank 3-5, others score around player
+  const baseScore = G.score;
+  fakeScores = [
+    baseScore + 280 + Math.random()*80,
+    baseScore + 160 + Math.random()*60,
+    baseScore + 40 + Math.random()*50,
+    null, // player
+    Math.max(0, baseScore - 40 - Math.random()*60),
+    Math.max(0, baseScore - 100 - Math.random()*60),
+    Math.max(0, baseScore - 180 - Math.random()*40),
+  ];
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const lb = document.getElementById('leaderboard');
+  if (!lb) return;
+  const rows = [];
+  let playerRow = 3;
+  for (let i=0;i<7;i++) {
+    if (i===playerRow) {
+      rows.push({name:G.nickname||'You',em:G.avatarEmoji,pts:G.score,isYou:true,rank:i+1});
+    } else {
+      const fi = i<playerRow ? i : i-1;
+      rows.push({name:FAKE_PLAYERS[fi].name,em:FAKE_PLAYERS[fi].em,pts:Math.round(fakeScores[i]||0),isYou:false,rank:i+1});
+    }
+  }
+  lb.innerHTML = rows.map(r=>`
+    <div class="lb-row">
+      <div class="lb-rank ${r.rank<=2?'gold':''}">${r.rank<=1?'🥇':r.rank<=2?'🥈':r.rank<=3?'🥉':r.rank}</div>
+      <div class="lb-em">${r.em}</div>
+      <div class="lb-name ${r.isYou?'you':''}">${r.name}${r.isYou?' (You)':''}</div>
+      <div class="lb-pts">${r.pts.toLocaleString()}</div>
+    </div>
+  `).join('');
+}
+
+function startLeaderboardUpdates() {
+  updateFakeLeaderboard();
+  G.leaderboardInterval = setInterval(()=>{
+    // Randomly shift fake player scores slightly
+    fakeScores = fakeScores.map((s,i)=> s===null?null:s+Math.floor(Math.random()*20));
+    renderLeaderboard();
+  }, 5000);
+}
+
+// ── AI INSIGHTS ────────────────────────────────────────────────────
+let insightIdx = 0;
+function startAIInsights() {
+  updateAIInsight(0);
+  setInterval(()=>{
+    insightIdx = (insightIdx+1) % AI_INSIGHTS.length;
+    updateAIInsight(insightIdx);
+  }, 8000);
+}
+function updateAIInsight(i) {
+  const el = document.getElementById('ai-insight-text');
+  if (el) el.innerHTML = AI_INSIGHTS[i % AI_INSIGHTS.length];
+}
+
+// ── TOAST NOTIFICATIONS ────────────────────────────────────────────
+function toast(msg, duration=4000) {
+  const wrap = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{
+    el.classList.add('out');
+    setTimeout(()=>el.remove(), 300);
+  }, duration);
+}
+
+let notifIdx = 0;
+function scheduleNotifs() {
+  const delays = [3500, 8000, 15000, 22000, 30000, 42000];
+  delays.forEach((d,i)=>{
+    setTimeout(()=>{
+      if (document.getElementById('screen-gameplay').classList.contains('active')) {
+        toast(NOTIFS[i % NOTIFS.length]);
+      }
+    }, d);
+  });
+}
+
+// ── RESTART ────────────────────────────────────────────────────────
+function restartGame() {
+  G.score=0; G.tasksCompleted=0; G.wave=1; G.apexAccepted=false;
+  G.escShown=false; G.fakeRank=4; G.aiRecsClicked=0; G.urgentClicked=0;
+  G.darkPatternsHit=new Set(); fakeScores=[0,0,0,0,0,0];
+  document.getElementById('dp-reveal').classList.remove('vis');
+  document.getElementById('dp-cards').innerHTML='';
+  document.querySelector('.reveal-wrap').style.display='';
+  document.getElementById('wave-banner').style.display='none';
+  document.getElementById('task-feed').innerHTML='';
+  document.getElementById('score-display').textContent='0';
+  document.getElementById('rank-num').textContent='#4';
+  document.getElementById('prog-fill').style.width='0%';
+  document.getElementById('prog-pct').textContent='0%';
+  document.getElementById('toasts').innerHTML='';
+  showScreen('welcome');
+}
+
+// ── INIT ───────────────────────────────────────────────────────────
+showScreen('welcome');
+</script>
+</body>
+</html>
