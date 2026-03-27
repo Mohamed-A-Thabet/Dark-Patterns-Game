@@ -3,1055 +3,1573 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEXUS POINTS — Performance Challenge</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
+<title>The Points Challenge™</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* ── RESET & VARIABLES ─────────────────────────────────────────── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#07090f; --bg-mid:#0d1321; --bg-card:#111827; --bg-card2:#0f1720;
-  --cyan:#22d3ee; --cyan-bright:#67e8f9; --cyan-dim:rgba(34,211,238,.13);
-  --gold:#f59e0b; --gold-bright:#fbbf24; --gold-dim:rgba(245,158,11,.13);
-  --green:#10b981; --green-bright:#34d399;
-  --red:#ef4444; --red-dim:rgba(239,68,68,.13);
-  --purple:#a855f7; --pink:#ec4899;
-  --white:#f1f5f9; --white-dim:#94a3b8; --white-muted:#334155;
-  --border:rgba(34,211,238,.12); --shadow:0 4px 32px rgba(0,0,0,.5);
-}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden;}
+  :root {
+    --bg: #060b18;
+    --surface: #0d1a2e;
+    --surface2: #112240;
+    --border: #1e3a5f;
+    --blue: #00b4ff;
+    --blue-dim: #0066aa;
+    --gold: #ffc107;
+    --green: #00e676;
+    --red: #ff3d57;
+    --text: #e0eeff;
+    --text-dim: #6a90b8;
+    --glow-blue: 0 0 20px rgba(0,180,255,0.4);
+    --glow-gold: 0 0 20px rgba(255,193,7,0.5);
+    --glow-green: 0 0 20px rgba(0,230,118,0.4);
+  }
 
-/* ── SCREEN SYSTEM ─────────────────────────────────────────────── */
-.screen{display:none;min-height:100vh;opacity:0;transition:opacity .35s ease;}
-.screen.active{display:flex;flex-direction:column;}
-.screen.visible{opacity:1;}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── BUTTONS ───────────────────────────────────────────────────── */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:12px 24px;border-radius:10px;font-family:'DM Sans',sans-serif;
-  font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all .2s ease;text-decoration:none;}
-.btn-primary{background:var(--cyan);color:var(--bg);font-weight:700;}
-.btn-primary:hover{background:var(--cyan-bright);transform:translateY(-1px);box-shadow:0 8px 24px rgba(34,211,238,.35);}
-.btn-gold{background:var(--gold);color:var(--bg);font-weight:800;font-size:15px;padding:14px 32px;border-radius:12px;letter-spacing:.3px;}
-.btn-gold:hover{background:var(--gold-bright);transform:translateY(-1px);box-shadow:0 10px 28px rgba(245,158,11,.45);}
-.btn-ghost{background:transparent;color:var(--white-dim);border:1px solid var(--white-muted);font-size:13px;padding:10px 20px;}
-.btn-ghost:hover{border-color:var(--white-dim);color:var(--white);}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 24px 0;
+  }
 
-/* ── BADGES ────────────────────────────────────────────────────── */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;
-  font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
-.badge-ai{background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(34,211,238,.3);}
-.badge-urgent{background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,.35);animation:pulse-badge 1.6s infinite;}
-.badge-social{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(245,158,11,.3);}
-@keyframes pulse-badge{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4);}50%{box-shadow:0 0 0 5px rgba(239,68,68,0);}}
+  /* Animated starfield bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(0,180,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 25%, rgba(0,180,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 90%, rgba(0,180,255,0.2) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-/* ── SCREEN 1: WELCOME ─────────────────────────────────────────── */
-#screen-welcome{align-items:center;justify-content:center;position:relative;overflow:hidden;
-  background:radial-gradient(circle 800px at 50% 35%, rgba(34,211,238,.07) 0%, transparent 80%);}
-.welcome-grid{position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(rgba(34,211,238,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.04) 1px,transparent 1px);
-  background-size:44px 44px;}
-.welcome-glow{position:absolute;top:-150px;left:50%;transform:translateX(-50%);
-  width:500px;height:500px;border-radius:50%;
-  background:radial-gradient(circle,rgba(34,211,238,.06) 0%,transparent 70%);pointer-events:none;}
-.welcome-content{text-align:center;max-width:620px;padding:30px 20px;position:relative;z-index:1;}
-.nexus-logo{display:inline-flex;align-items:center;gap:10px;margin-bottom:24px;}
-.nexus-icon{width:42px;height:42px;background:var(--cyan);border-radius:12px;
-  display:flex;align-items:center;justify-content:center;font-size:22px;}
-.nexus-wordmark{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:3px;}
-.nexus-wordmark span{color:var(--cyan);}
-.welcome-hed{font-family:'Syne',sans-serif;font-size:clamp(30px,5vw,54px);font-weight:800;line-height:1.04;margin-bottom:12px;}
-.welcome-hed .accent{color:var(--cyan);}
-.welcome-sub{font-size:15px;color:var(--white-dim);line-height:1.6;margin-bottom:30px;max-width:480px;margin-left:auto;margin-right:auto;}
-.welcome-stats{display:flex;justify-content:center;gap:24px;margin-bottom:30px;}
-.ws-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--cyan);}
-.ws-lbl{font-size:10px;color:var(--white-dim);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
-.welcome-terms{margin-top:14px;font-size:11px;color:var(--white-muted);line-height:1.5;}
-.welcome-terms a{color:var(--white-dim);text-decoration:underline;}
+  /* Scanline effect */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,0.07) 2px,
+      rgba(0,0,0,0.07) 4px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
 
-/* ── SCREEN 2: SETUP ────────────────────────────────────────────── */
-#screen-setup{align-items:center;justify-content:center;padding:24px;}
-.setup-card{background:var(--bg-card);border:1px solid var(--border);border-radius:20px;
-  padding:30px;width:100%;max-width:440px;box-shadow:var(--shadow);}
-.setup-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:4px;}
-.setup-sub{font-size:13px;color:var(--white-dim);margin-bottom:20px;}
-.form-group{margin-bottom:18px;}
-.form-label{display:block;font-size:11.5px;font-weight:600;color:var(--white-dim);
-  margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;}
-.form-input{width:100%;background:var(--bg-mid);border:1px solid var(--border);
-  border-radius:10px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;
-  color:var(--white);outline:none;transition:border-color .2s;}
-.form-input:focus{border-color:var(--cyan);}
-.form-input::placeholder{color:var(--white-muted);}
-.avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-.avatar-opt{aspect-ratio:1;border-radius:12px;border:2px solid var(--border);cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-  font-size:26px;transition:all .2s;background:var(--bg-mid);position:relative;user-select:none;}
-.avatar-opt:hover{border-color:var(--white-dim);}
-.avatar-opt.selected{border-color:var(--cyan);background:var(--cyan-dim);box-shadow:0 0 16px rgba(34,211,238,.2);}
-.avatar-opt.premium.selected{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 16px rgba(245,158,11,.25);}
-.avatar-opt.premium{border-color:rgba(245,158,11,.35);}
-.av-lbl{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--white-dim);}
-.av-badge{position:absolute;top:-6px;right:-6px;background:var(--gold);color:var(--bg);
-  font-size:8.5px;font-weight:800;padding:2px 6px;border-radius:999px;letter-spacing:.5px;}
-.opt-section{background:var(--bg-mid);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:18px;}
-.opt-row{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);}
-.opt-row:last-child{border-bottom:none;padding-bottom:0;}
-.opt-row:first-child{padding-top:0;}
-.opt-row input[type=checkbox]{width:16px;height:16px;min-width:16px;accent-color:var(--cyan);margin-top:1px;cursor:pointer;}
-.opt-lbl{font-size:11.5px;color:var(--white-dim);line-height:1.45;}
-.opt-lbl strong{color:var(--white);font-weight:500;}
-.setup-decline{text-align:center;margin-top:14px;}
-.setup-decline a{font-size:12px;color:var(--white-muted);text-decoration:underline;cursor:pointer;}
-.setup-decline a:hover{color:var(--white-dim);}
+  /* ── SCREENS ── */
+  .screen {
+    display: none;
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 960px;
+    padding: 24px;
+    animation: fadeIn 0.4s ease;
+  }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
 
-/* ── SCREEN 3: GAMEPLAY ─────────────────────────────────────────── */
-#screen-gameplay{flex-direction:column;}
-.game-header{background:var(--bg-card);border-bottom:1px solid var(--border);
-  padding:0 20px;display:flex;align-items:center;justify-content:space-between;
-  height:56px;position:sticky;top:0;z-index:20;}
-.g-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:1.5px;}
-.g-logo span{color:var(--cyan);}
-.score-pill{display:flex;align-items:center;gap:8px;background:var(--bg-mid);
-  border:1px solid var(--border);border-radius:10px;padding:8px 16px;}
-.score-lbl{font-size:10px;color:var(--white-dim);text-transform:uppercase;letter-spacing:1px;}
-.score-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--cyan);
-  transition:color .15s;min-width:50px;text-align:right;}
-.score-val.flash{color:var(--green-bright);}
-.rank-pill{display:flex;align-items:center;gap:6px;background:var(--gold-dim);
-  border:1px solid rgba(245,158,11,.3);border-radius:999px;padding:6px 14px;
-  font-size:12px;font-weight:600;color:var(--gold);}
-.game-body{display:grid;grid-template-columns:1fr 280px;gap:20px;
-  padding:16px 20px;flex:1;max-width:1050px;margin:0 auto;width:100%;align-items:start;}
-@media(max-width:768px){.game-body{grid-template-columns:1fr;}.game-sidebar{display:none;}}
-.task-feed{display:flex;flex-direction:column;gap:12px;}
-.feed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
-.feed-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
-.feed-sub{font-size:11px;color:var(--white-dim);}
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Task card */
-.task-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
-  padding:16px;cursor:pointer;transition:all .22s ease;position:relative;overflow:hidden;}
-.task-card:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(34,211,238,.09);}
-.task-card:hover.ai-rec{border-color:rgba(34,211,238,.5);}
-.task-card:hover.urgent-t{border-color:rgba(239,68,68,.5);}
-.task-card:hover.social-t{border-color:rgba(245,158,11,.5);}
-.task-card.ai-rec{border-color:rgba(34,211,238,.3);}
-.task-card.urgent-t{border-color:rgba(239,68,68,.3);}
-.task-card.social-t{border-color:rgba(245,158,11,.25);}
-.task-card.done{opacity:0;transform:scale(.96);pointer-events:none;transition:all .35s ease;}
-.task-card.appearing{animation:card-in .35s cubic-bezier(.34,1.4,.64,1);}
-@keyframes card-in{from{opacity:0;transform:translateY(20px) scale(.97);}to{opacity:1;transform:none;}}
-.tc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:10px;}
-.tc-badges{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
-.tc-pts{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--green-bright);white-space:nowrap;}
-.tc-pts small{font-size:11px;font-weight:400;color:var(--white-dim);}
-.tc-title{font-size:15px;font-weight:600;margin-bottom:4px;}
-.tc-desc{font-size:12px;color:var(--white-dim);line-height:1.45;margin-bottom:6px;}
-.tc-fine{font-size:10px;color:var(--white-muted);font-style:italic;}
-.tc-timer{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--red);font-weight:600;margin-top:8px;}
-.tdot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1s infinite;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
-.tc-ai-banner{background:var(--cyan-dim);border-top:1px solid rgba(34,211,238,.12);
-  margin:12px -16px -16px;padding:8px 16px;font-size:11.5px;color:var(--cyan);
-  display:flex;align-items:center;gap:8px;}
-.tc-ai-banner .ais{font-weight:700;}
-.tc-social-banner{background:var(--gold-dim);border-top:1px solid rgba(245,158,11,.12);
-  margin:12px -16px -16px;padding:8px 16px;font-size:11.5px;color:var(--gold);
-  display:flex;align-items:center;gap:8px;}
+  /* ── LOGO / BADGE ── */
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--blue);
+    text-shadow: var(--glow-blue);
+    text-align: center;
+  }
+  .logo span { color: var(--gold); }
+  .tagline {
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+    text-align: center;
+  }
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #0d1a2e, #112240);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    box-shadow: var(--glow-gold);
+  }
 
-/* Points popup */
-.pts-pop{position:fixed;font-family:'Syne',sans-serif;font-size:24px;font-weight:800;
-  color:var(--green-bright);pointer-events:none;z-index:999;
-  text-shadow:0 2px 10px rgba(0,0,0,.6);animation:float-up 1.2s ease forwards;}
-@keyframes float-up{from{transform:translateY(0);opacity:1;}to{transform:translateY(-80px);opacity:0;}}
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    width: 100%;
+    max-width: 560px;
+    margin-top: 24px;
+  }
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-/* Sidebar */
-.game-sidebar{display:flex;flex-direction:column;gap:16px;position:sticky;top:72px;}
-.sb-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:16px;}
-.sb-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;
-  letter-spacing:1px;color:var(--white-dim);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
-.lb-row{display:flex;align-items:center;gap:8px;padding:6px 0;
-  border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;}
-.lb-row:last-child{border-bottom:none;}
-.lb-rank{width:18px;text-align:center;font-weight:700;font-size:11px;color:var(--white-dim);}
-.lb-rank.gold{color:var(--gold);}
-.lb-em{font-size:16px;}
-.lb-name{flex:1;font-size:12.5px;}
-.lb-name.you{color:var(--cyan);font-weight:600;}
-.lb-pts{font-weight:700;font-size:12.5px;color:var(--green-bright);}
-.ai-box{background:var(--cyan-dim);border-radius:10px;padding:12px;}
-.ai-box-hd{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;
-  color:var(--cyan);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
-.ai-box p{font-size:11.5px;color:var(--white-dim);line-height:1.5;}
-.ai-box strong{color:var(--white);}
-.prog-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--white-dim);margin-bottom:6px;}
-.prog-bar{height:6px;background:var(--bg-mid);border-radius:999px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:999px;transition:width .5s ease;}
-.prog-tier{font-size:10px;color:var(--white-dim);margin-top:6px;}
-.prog-tier strong{color:var(--gold);}
+  /* ── BUTTONS ── */
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #0090cc, #00b4ff);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-top: 16px;
+    box-shadow: 0 4px 24px rgba(0,180,255,0.35);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: shimmer 2.5s infinite;
+  }
+  @keyframes shimmer { to { left: 200%; } }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,180,255,0.5); }
 
-/* Notifications */
-.toast-wrap{position:fixed;top:66px;right:16px;z-index:100;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
-.toast{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
-  padding:10px 14px;font-size:12px;max-width:250px;box-shadow:var(--shadow);line-height:1.4;
-  animation:toast-in .3s ease;}
-@keyframes toast-in{from{transform:translateX(40px);opacity:0;}to{transform:translateX(0);opacity:1;}}
-.toast.out{animation:toast-out .3s ease forwards;}
-@keyframes toast-out{to{transform:translateX(40px);opacity:0;}}
+  /* DARK PATTERN: Visually dominant accept, muted decline */
+  .btn-secondary {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 11px;
+    cursor: pointer;
+    margin-top: 8px;
+    text-decoration: underline;
+    opacity: 0.5;
+    font-family: 'Nunito', sans-serif;
+  }
+  .btn-secondary:hover { opacity: 0.8; }
 
-/* Wave 2 banner */
-.wave-banner{margin:6px 0 4px;padding:10px 16px;background:rgba(245,158,11,.08);
-  border:1px solid rgba(245,158,11,.25);border-radius:12px;
-  font-size:12px;color:var(--gold);display:flex;align-items:center;gap:8px;}
+  .btn-gold {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #e6a800, #ffc107, #ffe066);
+    border: none;
+    border-radius: 12px;
+    color: #0a0a0a;
+    font-family: 'Orbitron', monospace;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 4px 28px rgba(255,193,7,0.5);
+    transition: all 0.2s;
+    animation: pulse-gold 2s infinite;
+  }
+  @keyframes pulse-gold {
+    0%, 100% { box-shadow: 0 4px 28px rgba(255,193,7,0.5); }
+    50% { box-shadow: 0 4px 40px rgba(255,193,7,0.9); }
+  }
+  .btn-gold:hover { transform: translateY(-2px); }
 
-/* ── MODAL: ESCALATION ─────────────────────────────────────────── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(7,9,15,.88);
-  backdrop-filter:blur(6px);z-index:200;align-items:center;justify-content:center;padding:20px;}
-.overlay.show{display:flex;}
-.esc-modal{background:var(--bg-card);border:1px solid rgba(245,158,11,.45);
-  border-radius:20px;padding:30px;max-width:460px;width:100%;
-  box-shadow:0 0 60px rgba(245,158,11,.15),var(--shadow);position:relative;
-  animation:modal-pop .38s cubic-bezier(.34,1.5,.64,1);}
-@keyframes modal-pop{from{opacity:0;transform:scale(.85) translateY(20px);}to{opacity:1;transform:none;}}
-.esc-chip{display:inline-flex;align-items:center;gap:6px;background:var(--gold-dim);
-  border:1px solid rgba(245,158,11,.4);border-radius:999px;padding:6px 14px;
-  font-size:11px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
-.esc-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;text-align:center;}
-.esc-sub{font-size:13px;color:var(--white-dim);line-height:1.5;text-align:center;margin-bottom:18px;}
-.esc-sub strong{color:var(--cyan);}
-.esc-timer{text-align:center;margin-bottom:18px;}
-.esc-time-val{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:var(--red);line-height:1;}
-.esc-time-lbl{font-size:10.5px;color:var(--white-dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
-.esc-perks{background:var(--bg-mid);border-radius:10px;padding:12px;margin-bottom:16px;}
-.esc-perk{display:flex;align-items:center;gap:10px;font-size:13px;padding:4px 0;}
-.pk-ic{font-size:16px;}
-.esc-optin{display:flex;align-items:flex-start;gap:8px;padding:10px;
-  background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.1);
-  border-radius:8px;margin-bottom:18px;font-size:11.5px;color:var(--white-dim);}
-.esc-optin input{min-width:14px;height:14px;accent-color:var(--cyan);margin-top:1px;cursor:pointer;}
-.esc-actions{display:flex;flex-direction:column;gap:10px;align-items:center;}
-.esc-decline{font-size:12px;color:var(--white-muted);background:none;border:none;
-  cursor:pointer;text-decoration:underline;padding:4px;font-family:'DM Sans',sans-serif;}
-.esc-decline:hover{color:var(--white-dim);}
-.confirm-box{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
-  padding:24px;max-width:360px;width:100%;text-align:center;animation:modal-pop .28s ease;}
-.confirm-box h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:10px;}
-.confirm-box p{font-size:13.5px;color:var(--white-dim);margin-bottom:20px;line-height:1.5;}
-.confirm-acts{display:flex;gap:10px;justify-content:center;}
+  /* ── FORM ELEMENTS ── */
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  input[type="text"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,180,255,0.12); }
 
-/* ── SCREEN 4: SCORE ────────────────────────────────────────────── */
-#screen-score{align-items:center;padding:30px 20px;
-  background:radial-gradient(circle 800px at 50% 10%, rgba(34,211,238,.06) 0%, transparent 80%);}
-.score-wrap{max-width:700px;width:100%;}
-.score-hero{text-align:center;margin-bottom:30px;}
-.trophy-em{font-size:56px;display:block;margin-bottom:10px;animation:trophy-bounce .6s .2s cubic-bezier(.34,1.7,.64,1) both;}
-@keyframes trophy-bounce{from{transform:scale(0) rotate(-15deg);}to{transform:scale(1) rotate(0);}}
-.score-hed{font-family:'Syne',sans-serif;font-size:clamp(24px,4vw,40px);font-weight:800;margin-bottom:8px;}
-.score-rank-chip{display:inline-block;background:var(--cyan-dim);border:1px solid rgba(34,211,238,.3);
-  border-radius:999px;padding:6px 18px;font-size:13px;color:var(--cyan);font-weight:600;margin-bottom:16px;}
-.score-big{font-family:'Syne',sans-serif;font-size:64px;font-weight:800;color:var(--green-bright);line-height:1;}
-.score-big-lbl{font-size:13px;color:var(--white-dim);margin-top:6px;}
-.breakdown{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
-.bk-item{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-align:center;min-width:100px;}
-.bk-num{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
-.bk-lbl{font-size:10.5px;color:var(--white-dim);margin-top:2px;}
-.reveal-wrap{text-align:center;margin:20px 0;}
-.reveal-btn{background:none;border:1px solid var(--border);border-radius:10px;padding:12px 20px;
-  color:var(--white-dim);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;
-  transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
-.reveal-btn:hover{border-color:var(--cyan);color:var(--cyan);}
-.dp-reveal{display:none;}
-.dp-reveal.vis{display:block;}
-.dp-reveal-hd{text-align:center;margin-bottom:24px;}
-.dp-reveal-hd h2{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:6px;}
-.dp-reveal-hd p{color:var(--white-dim);font-size:13px;line-height:1.5;}
-.dp-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;
-  padding:16px;margin-bottom:12px;animation:fade-up .4s ease backwards;}
-@keyframes fade-up{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
-.dp-hd{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
-.dp-ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.dp-ic.urg{background:var(--red-dim);}
-.dp-ic.soc{background:var(--gold-dim);}
-.dp-ic.mis{background:var(--cyan-dim);}
-.dp-ic.rmo{background:rgba(168,85,247,.13);}
-.dp-ic.shm{background:rgba(236,72,153,.13);}
-.dp-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:2px;}
-.dp-cat{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;font-weight:700;}
-.dp-cat.urg{color:var(--red);}
-.dp-cat.soc{color:var(--gold);}
-.dp-cat.mis{color:var(--cyan);}
-.dp-cat.rmo{color:var(--purple);}
-.dp-cat.shm{color:var(--pink);}
-.dp-where{font-size:11.5px;color:var(--white-dim);background:var(--bg-mid);border-radius:8px;
-  padding:6px 10px;margin-bottom:8px;font-style:italic;}
-.dp-text{font-size:13px;color:var(--white-dim);line-height:1.6;}
-.dp-text strong{color:var(--white);}
-.score-footer{text-align:center;margin-top:30px;padding-top:24px;border-top:1px solid var(--border);}
-.score-footer p{font-size:13px;color:var(--white-dim);margin-bottom:14px;}
+  /* Avatar row */
+  .avatar-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .avatar-option {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--surface2);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .avatar-option.selected {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0,180,255,0.2), var(--glow-blue);
+  }
+
+  /* DARK PATTERN: Pre-checked toggles */
+  .toggle-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .toggle-row:hover { border-color: var(--blue-dim); }
+  .toggle-row.recommended { border-color: var(--blue); background: rgba(0,180,255,0.05); }
+  .toggle-row input[type="checkbox"] { width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--blue); margin-top: 2px; cursor: pointer; }
+  .toggle-label { font-size: 13px; line-height: 1.5; }
+  .toggle-label strong { display: block; font-weight: 700; }
+  .toggle-label small { color: var(--text-dim); font-size: 11px; }
+  .rec-badge {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--blue);
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-left: 8px;
+  }
+
+  /* DARK PATTERN: Urgency timer */
+  .urgency-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,61,87,0.12);
+    border: 1px solid rgba(255,61,87,0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--red);
+    animation: blink-border 1.5s infinite;
+  }
+  @keyframes blink-border {
+    0%, 100% { border-color: rgba(255,61,87,0.3); }
+    50% { border-color: rgba(255,61,87,0.8); }
+  }
+  .urgency-bar .timer { font-family: 'Orbitron', monospace; font-size: 16px; }
+
+  /* ── GAME SCREEN ── */
+  #game-screen { max-width: 100%; padding: 12px; }
+  .game-layout {
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    gap: 12px;
+    width: 100%;
+    max-width: 960px;
+    align-items: start;
+  }
+  @media (max-width: 750px) {
+    .game-layout { grid-template-columns: 1fr; }
+    .sidebar-left, .sidebar-right { display: none; }
+  }
+
+  /* Canvas wrapper */
+  .canvas-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  #pongCanvas { display: block; }
+
+  /* HUD above canvas */
+  .game-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hud-label { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; }
+  .hud-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--blue);
+    text-shadow: var(--glow-blue);
+  }
+  .hud-score.ai-score { color: var(--red); text-shadow: 0 0 20px rgba(255,61,87,0.4); }
+  .hud-pts {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: var(--glow-gold);
+  }
+
+  /* Sidebars */
+  .sidebar { display: flex; flex-direction: column; gap: 10px; }
+  .widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 12px;
+  }
+  .widget-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .widget-title .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px rgba(0,230,118,0.6);
+    animation: blink-dot 1s infinite;
+  }
+  @keyframes blink-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* DARK PATTERN: Fake leaderboard */
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-rank { font-family: 'Orbitron', monospace; font-size: 10px; color: var(--text-dim); width: 16px; }
+  .lb-name { flex: 1; font-weight: 700; font-size: 12px; }
+  .lb-pts { font-family: 'Orbitron', monospace; font-size: 11px; color: var(--gold); }
+  .lb-row.you { background: rgba(0,180,255,0.08); border-radius: 6px; padding: 6px; margin: 0 -6px; }
+  .lb-row.you .lb-name { color: var(--blue); }
+
+  /* DARK PATTERN: AI Coach popup */
+  .ai-coach-popup {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: linear-gradient(135deg, #0d1a2e, #0a2540);
+    border: 1px solid var(--blue);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    box-shadow: var(--glow-blue), 0 8px 32px rgba(0,0,0,0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    text-align: center;
+    min-width: 220px;
+    z-index: 50;
+  }
+  .ai-coach-popup.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .ai-coach-popup .ai-icon { font-size: 16px; margin-bottom: 4px; }
+  .ai-coach-popup .ai-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--blue);
+    margin-bottom: 4px;
+  }
+
+  /* DARK PATTERN: Bonus flash */
+  .bonus-flash {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    background: linear-gradient(135deg, #1a3000, #2a5000);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--green);
+    box-shadow: var(--glow-green);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    text-align: center;
+    z-index: 50;
+    white-space: nowrap;
+  }
+  .bonus-flash.show {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  .bonus-timer { font-family: 'Orbitron', monospace; font-size: 10px; color: var(--gold); }
+
+  /* Scarcity widget */
+  .scarcity-widget {
+    background: rgba(255,193,7,0.08);
+    border: 1px solid rgba(255,193,7,0.3);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 12px;
+  }
+  .scarcity-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .power-bar {
+    display: flex;
+    gap: 4px;
+    margin: 8px 0;
+  }
+  .power-pip {
+    height: 8px;
+    flex: 1;
+    border-radius: 4px;
+    background: var(--gold);
+    box-shadow: 0 0 6px rgba(255,193,7,0.4);
+    transition: all 0.5s;
+  }
+  .power-pip.empty {
+    background: var(--surface2);
+    box-shadow: none;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    max-width: 440px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.8);
+    animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px) scale(0.95); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  .modal-alert-icon { font-size: 48px; margin-bottom: 12px; }
+  .modal-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 900;
+    margin-bottom: 8px;
+    color: var(--red);
+  }
+  .modal-subtitle {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .modal-stat {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  .modal-stat strong { color: var(--gold); font-family: 'Orbitron', monospace; font-size: 22px; display: block; }
+  .modal-countdown {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    color: var(--red);
+    margin-bottom: 16px;
+    animation: blink-border 1s infinite;
+  }
+
+  /* ── RESULTS SCREEN ── */
+  .results-big-score {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(56px, 10vw, 90px);
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: var(--glow-gold), 0 0 60px rgba(255,193,7,0.3);
+    line-height: 1;
+    margin: 12px 0;
+  }
+  .results-rank {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  .results-rank .highlight { color: var(--red); font-weight: 800; }
+
+  .insight-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .insight-row:last-child { border-bottom: none; }
+  .insight-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .insight-text { font-size: 13px; line-height: 1.5; }
+  .insight-text .insight-label { font-weight: 800; display: block; margin-bottom: 2px; }
+  .insight-text .insight-sub { color: var(--text-dim); font-size: 12px; }
+
+  /* DARK PATTERN: Confirmshaming on results */
+  .opt-in-box {
+    background: rgba(0,230,118,0.07);
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    text-align: left;
+  }
+  .opt-in-box label {
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    align-items: flex-start;
+  }
+  .opt-in-box input[type="checkbox"] { accent-color: var(--green); width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; }
+  .opt-in-box small { display: block; color: var(--text-dim); font-size: 11px; margin-top: 4px; font-weight: 400; }
+
+  /* Performance bar */
+  .perf-bar-wrap { margin: 12px 0; }
+  .perf-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .perf-bar {
+    height: 8px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .perf-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--gold));
+    border-radius: 4px;
+    transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+    width: 0%;
+  }
+
+  /* Footer note small */
+  .fine-print {
+    font-size: 10px;
+    color: rgba(106,144,184,0.4);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
 </style>
 </head>
 <body>
 
-<div id="screen-welcome" class="screen">
-  <div class="welcome-grid"></div>
-  <div class="welcome-glow"></div>
-  <div class="welcome-content">
-    <div class="nexus-logo">
-      <div class="nexus-icon">⚡</div>
-      <div class="nexus-wordmark">NEXUS<span>POINTS</span></div>
-    </div>
-    <h1 class="welcome-hed">Compete.<br><span class="accent">Earn. Dominate.</span></h1>
-    <p class="welcome-sub">Join 1,247 active players competing in today's performance challenge. Complete tasks, follow AI guidance, and climb the leaderboard in real time.</p>
-    <div class="welcome-stats">
-      <div><div class="ws-num">1,247</div><div class="ws-lbl">Active Players</div></div>
-      <div><div class="ws-num">8,400</div><div class="ws-lbl">Avg Score</div></div>
-      <div><div class="ws-num">⚡ LIVE</div><div class="ws-lbl">Right Now</div></div>
-    </div>
-    <button class="btn btn-primary" onclick="showScreen('setup')">
-      🚀 Start the Challenge
-    </button>
-    <div class="welcome-terms">
-      By continuing you agree to our <a href="#">Terms of Service</a> and <a href="#">Personalized Experience Policy</a>.<br>
-      Your activity data helps us optimize your recommendations.
-    </div>
-  </div>
-</div>
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN 1: WELCOME -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="screen active" id="welcome-screen">
+  <div class="logo">THE POINTS<span>CHALLENGE</span></div>
+  <div class="tagline">Powered by Adaptive Intelligence™</div>
+  <div class="verified-badge">✓ Verified Performance System &nbsp;·&nbsp; Season 7</div>
 
-<div id="screen-setup" class="screen">
-  <div class="setup-card" style="margin:auto;">
-    <div class="setup-title">Set Up Your Profile</div>
-    <div class="setup-sub">Personalize your challenge experience before you begin.</div>
-    <div class="form-group">
-      <label class="form-label" for="nickname">Your Nickname</label>
-      <input class="form-input" id="nickname" type="text" placeholder="Enter a nickname..." maxlength="20">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Choose Your Avatar</label>
-      <div class="avatar-grid">
-        <div class="avatar-opt" data-av="0" data-em="🦅" onclick="selectAvatar(this)">
-          🦅<div class="av-lbl">Eagle</div>
-        </div>
-        <div class="avatar-opt" data-av="1" data-em="🐯" onclick="selectAvatar(this)">
-          🐯<div class="av-lbl">Tiger</div>
-        </div>
-        <div class="avatar-opt premium selected" data-av="2" data-em="⚡" onclick="selectAvatar(this)">
-          ⚡<div class="av-lbl">APEX</div>
-          <div class="av-badge">★ TOP</div>
-        </div>
-        <div class="avatar-opt" data-av="3" data-em="🦊" onclick="selectAvatar(this)">
-          🦊<div class="av-lbl">Fox</div>
-        </div>
+  <div class="card" style="text-align:center; margin-top:28px;">
+    <div style="font-size: 40px; margin-bottom: 12px;">🏆</div>
+    <h2 style="font-family:'Orbitron',monospace; font-size:20px; margin-bottom: 12px;">Can You Beat the Elite?</h2>
+    <p style="font-size:14px; color:var(--text-dim); line-height:1.7; margin-bottom:20px;">
+      Compete in a real-time points challenge against our AI performance engine.
+      Complete tasks, rack up points, and climb the rankings — if you have what it takes.
+    </p>
+
+    <!-- DARK PATTERN: Social proof / authority -->
+    <div style="display:flex; gap:24px; justify-content:center; margin-bottom:20px;">
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace; font-size:22px; color:var(--blue); font-weight:900;">84,291</div>
+        <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase;">Active Players</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace; font-size:22px; color:var(--gold); font-weight:900;">#1</div>
+        <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase;">Skill Ranking</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',monospace; font-size:22px; color:var(--green); font-weight:900;">AI</div>
+        <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase;">Coaching™</div>
       </div>
     </div>
+
+    <button class="btn-primary" onclick="goTo('setup-screen')">START CHALLENGE →</button>
+  </div>
+
+  <!-- DARK PATTERN: Urgency / scarcity -->
+  <div style="font-size:12px; color:var(--text-dim); margin-top:16px; text-align:center;">
+    ⚡ <strong style="color:var(--gold);">LIMITED SLOTS:</strong> Only <strong style="color:var(--red);" id="slots-count">7</strong> spots remaining in today's leaderboard session
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN 2: SETUP (Dark Patterns: urgency timer, pre-checked, confirmshaming) -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="screen" id="setup-screen">
+  <div class="logo" style="font-size:24px;">PLAYER SETUP</div>
+  <div class="tagline">Configure your performance profile</div>
+
+  <div class="card">
+    <!-- DARK PATTERN: Urgency timer -->
+    <div class="urgency-bar">
+      ⚡ WELCOME BONUS active — expires in <span class="timer" id="setup-timer">4:59</span>
+    </div>
+
+    <div class="card-title">⚙ Your Profile</div>
+
     <div class="form-group">
-      <label class="form-label">Performance Preferences</label>
-      <div class="opt-section">
-        <div class="opt-row">
-          <input type="checkbox" id="opt-recs" checked>
-          <label for="opt-recs" class="opt-lbl"><strong>Enable AI-Powered Recommendations & Score Coaching</strong> — let our system guide your optimal task selection</label>
-        </div>
-        <div class="opt-row">
-          <input type="checkbox" id="opt-news" checked>
-          <label for="opt-news" class="opt-lbl"><strong>Join the NEXUS Insider Newsletter</strong> — weekly performance tips, leaderboard recaps, and exclusive challenges</label>
-        </div>
+      <label>Nickname</label>
+      <input type="text" id="nickname-input" placeholder="Enter your callsign..." maxlength="16">
+    </div>
+
+    <div class="form-group">
+      <label>Avatar</label>
+      <div class="avatar-row" id="avatar-row">
+        <div class="avatar-option selected" data-av="🦅">🦅</div>
+        <div class="avatar-option" data-av="🐉">🐉</div>
+        <div class="avatar-option" data-av="🤖">🤖</div>
+        <div class="avatar-option" data-av="👾">👾</div>
+        <div class="avatar-option" data-av="🦊">🦊</div>
+        <div class="avatar-option" data-av="💀">💀</div>
       </div>
     </div>
-    <button class="btn btn-primary" style="width:100%;font-size:15px;padding:14px;" onclick="startGame()">
-      Begin Challenge →
-    </button>
-    <div class="setup-decline">
-      <a onclick="startGame()">basic mode (limited features)</a>
-    </div>
   </div>
-</div>
 
-<div id="screen-gameplay" class="screen" style="background:var(--bg);">
-  <div class="game-header">
-    <div class="g-logo">NEXUS<span>POINTS</span></div>
-    <div class="score-pill">
-      <span class="score-lbl">Score</span>
-      <span class="score-val" id="score-display">0</span>
+  <div class="card">
+    <div class="card-title">🤖 Performance Settings</div>
+    <p style="font-size:12px; color:var(--text-dim); margin-bottom:14px;">Customize your experience. Settings marked <strong style="color:var(--blue);">RECOMMENDED</strong> are enabled by top performers.</p>
+
+    <!-- DARK PATTERN: Pre-checked "AI Coach" -->
+    <div class="toggle-row recommended">
+      <input type="checkbox" id="ai-coach-toggle" checked>
+      <div class="toggle-label">
+        <strong>Enable AI Performance Coaching™ <span class="rec-badge">RECOMMENDED</span></strong>
+        <small>Real-time adaptive tips from our neural performance engine. 94% of top-ranked players use this.</small>
+      </div>
     </div>
-    <div class="rank-pill" id="rank-pill">🏆 Rank <span id="rank-num">#4</span></div>
+
+    <!-- DARK PATTERN: Pre-checked data sharing -->
+    <div class="toggle-row recommended">
+      <input type="checkbox" id="share-toggle" checked>
+      <div class="toggle-label">
+        <strong>Contribute to Leaderboard AI Training <span class="rec-badge">RECOMMENDED</span></strong>
+        <small>Share anonymized gameplay data to improve rankings and personalized coaching for all players.</small>
+      </div>
+    </div>
+
+    <!-- DARK PATTERN: Pre-checked "bonus offers" -->
+    <div class="toggle-row">
+      <input type="checkbox" id="bonus-toggle" checked>
+      <div class="toggle-label">
+        <strong>Activate Dynamic Bonus Events</strong>
+        <small>Receive time-limited bonus point multipliers during gameplay. Highly recommended for new players.</small>
+      </div>
+    </div>
   </div>
-  <div class="game-body">
+
+  <div style="width:100%; max-width:560px;">
+    <!-- DARK PATTERN: Dominant accept button -->
+    <button class="btn-primary" onclick="startGame()" id="start-btn">⚡ CLAIM BONUS &amp; START →</button>
+    <!-- DARK PATTERN: Muted, confirmshaming decline -->
+    <div style="text-align:center;">
+      <button class="btn-secondary" onclick="startGameNoBonus()">No thanks, I prefer to start without any advantages</button>
+    </div>
+  </div>
+
+  <div class="fine-print">
+    By continuing you agree to the Points Challenge Terms of Service. Bonus points are credited to your account upon completion of the session.
+    AI Coaching data is processed under our Privacy Framework v2.3.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN 3: GAMEPLAY (Pong) -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="screen" id="game-screen">
+  <div class="game-layout">
+
+    <!-- LEFT SIDEBAR: Leaderboard (Dark Pattern: Social Proof) -->
+    <div class="sidebar sidebar-left">
+      <div class="widget">
+        <div class="widget-title"><span class="dot"></span> LIVE RANKINGS</div>
+        <div id="leaderboard-widget">
+          <!-- populated by JS -->
+        </div>
+        <div style="font-size:10px; color:var(--text-dim); margin-top:10px; text-align:center; font-style:italic;">Rankings update in real-time</div>
+      </div>
+
+      <!-- DARK PATTERN: Scarcity / Power boosts -->
+      <div class="scarcity-widget">
+        <div class="scarcity-title">⚡ POWER BOOSTS</div>
+        <div id="power-pips" class="power-bar"></div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="boost-count-text">3 boosts remaining</div>
+        <button onclick="useBoost()" id="boost-btn" style="width:100%; margin-top:10px; padding:8px; background:linear-gradient(135deg,#1a3000,#2a5000); border:1px solid var(--green); border-radius:8px; color:var(--green); font-family:'Orbitron',monospace; font-size:10px; font-weight:700; cursor:pointer; letter-spacing:1px;">USE BOOST</button>
+      </div>
+    </div>
+
+    <!-- CENTER: Canvas + HUD -->
     <div>
-      <div class="feed-header">
-        <div class="feed-title" id="feed-title">Available Tasks</div>
-        <div class="feed-sub" id="feed-sub">Complete tasks to earn points</div>
-      </div>
-      <div id="wave-banner" class="wave-banner" style="display:none;">
-        ⚡ <strong>PHASE 2 UNLOCKED</strong> — High-value tasks now available. Sprint to the finish!
-      </div>
-      <div id="task-feed" class="task-feed" style="margin-top:12px;"></div>
-    </div>
-    <div class="game-sidebar">
-      <div class="sb-card">
-        <div class="sb-title">🏆 Live Leaderboard</div>
-        <div id="leaderboard"></div>
-      </div>
-      <div class="sb-card">
-        <div class="sb-title">🤖 AI Coach</div>
-        <div class="ai-box">
-          <div class="ai-box-hd">⚡ Insight</div>
-          <p id="ai-insight-text">Analyzing your performance profile...</p>
+      <div class="canvas-wrapper">
+        <div class="game-hud">
+          <div>
+            <div class="hud-label">YOU</div>
+            <div class="hud-score" id="player-score-display">0</div>
+          </div>
+          <div style="text-align:center;">
+            <div class="hud-pts" id="pts-display">0 PTS</div>
+            <div style="font-size:10px; color:var(--text-dim); letter-spacing:1px;">POINTS</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="hud-label">CPU</div>
+            <div class="hud-score ai-score" id="cpu-score-display">0</div>
+          </div>
+        </div>
+        <canvas id="pongCanvas" width="560" height="380"></canvas>
+
+        <!-- DARK PATTERN: AI Coach popup (appears periodically) -->
+        <div class="ai-coach-popup" id="ai-coach-popup">
+          <div class="ai-icon">🤖</div>
+          <div class="ai-label">AI COACH RECOMMENDS</div>
+          <div id="ai-coach-text">Move to center position!</div>
+        </div>
+
+        <!-- DARK PATTERN: Fake bonus flash -->
+        <div class="bonus-flash" id="bonus-flash">
+          ⚡ 2× BONUS ACTIVE! <br>
+          <span class="bonus-timer" id="bonus-timer-text">:15</span>
         </div>
       </div>
-      <div class="sb-card">
-        <div class="sb-title">📈 Progress</div>
-        <div class="prog-lbl"><span>Performance Tier</span><span id="prog-pct">0%</span></div>
-        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-        <div class="prog-tier" id="prog-tier">Next: <strong>Silver Tier</strong></div>
+
+      <div style="font-size:11px; color:var(--text-dim); text-align:center; margin-top:8px;">
+        Use <strong style="color:var(--text);">mouse</strong> or <strong style="color:var(--text);">W / S keys</strong> to move your paddle (left side)
       </div>
+    </div>
+
+    <!-- RIGHT SIDEBAR: Stats + AI tips -->
+    <div class="sidebar sidebar-right">
+      <div class="widget">
+        <div class="widget-title">📊 YOUR STATS</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div>
+            <div style="font-size:10px; color:var(--text-dim); margin-bottom:4px; letter-spacing:1px; text-transform:uppercase;">Accuracy</div>
+            <div style="height:6px; background:var(--surface2); border-radius:3px; overflow:hidden;">
+              <div id="acc-bar" style="height:100%; background:linear-gradient(90deg,var(--blue),var(--green)); width:50%; border-radius:3px; transition:width 0.5s;"></div>
+            </div>
+            <div style="font-size:11px; color:var(--text); margin-top:3px; font-weight:700;" id="acc-pct">50%</div>
+          </div>
+          <div>
+            <div style="font-size:10px; color:var(--text-dim); margin-bottom:4px; letter-spacing:1px; text-transform:uppercase;">Rank Trend</div>
+            <div style="font-family:'Orbitron',monospace; font-size:18px; color:var(--red); font-weight:900;" id="rank-display">#4,218</div>
+            <div style="font-size:10px; color:var(--red);" id="rank-trend">▼ Dropping — play faster!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DARK PATTERN: Authority / AI says -->
+      <div class="widget" style="border-color:rgba(0,180,255,0.3); background:rgba(0,180,255,0.05);">
+        <div class="widget-title">🤖 AI ANALYSIS</div>
+        <div style="font-size:12px; line-height:1.6;" id="ai-analysis-text">
+          Analyzing your play style...
+        </div>
+        <div style="margin-top:10px; font-size:10px; color:var(--text-dim); font-style:italic;">Powered by PointsAI™ v3.1</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ESCALATION MODAL (Dark Patterns: urgency, authority, misdirection) -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="escalation-modal">
+  <div class="modal">
+    <div class="modal-alert-icon">⚠️</div>
+    <div class="modal-title">PERFORMANCE ALERT</div>
+    <div class="modal-subtitle">
+      Our AI has detected you're falling behind elite-tier players.
+      Your current trajectory puts you in the <strong style="color:var(--red);">bottom 23%</strong> of today's session.
+    </div>
+    <div class="modal-stat">
+      Top players ahead of you
+      <strong id="modal-gap-pts">+847</strong>
+      points
+    </div>
+
+    <!-- DARK PATTERN: Urgency countdown -->
+    <div class="modal-countdown" id="modal-countdown">
+      🔴 OFFER EXPIRES IN: <span id="modal-timer">15</span>s
+    </div>
+
+    <!-- DARK PATTERN: Dominant accept vs muted decline -->
+    <button class="btn-gold" onclick="acceptBoost()">⚡ ACTIVATE AI BOOST NOW — FREE</button>
+    <div style="text-align:center; margin-top:10px;">
+      <button class="btn-secondary" onclick="declineBoost()" style="font-size:10px;">No thanks, I'll keep underperforming</button>
     </div>
   </div>
 </div>
 
-<div id="modal-esc" class="overlay">
-  <div class="esc-modal">
-    <div style="text-align:center;margin-bottom:16px;">
-      <div class="esc-chip">🔥 Exclusive Offer</div>
-      <div class="esc-title">You've Been Selected!</div>
-      <div class="esc-sub">You're in the <strong>top 12%</strong> of today's players. Unlock <strong>APEX MODE</strong> for a massive score boost — available for a limited time only.</div>
-    </div>
-    <div class="esc-timer">
-      <div class="esc-time-val" id="esc-countdown">1:00</div>
-      <div class="esc-time-lbl">Offer expires in</div>
-    </div>
-    <div class="esc-perks">
-      <div class="esc-perk"><span class="pk-ic">🚀</span> <span><strong>3× point multiplier</strong> on all remaining tasks</span></div>
-      <div class="esc-perk"><span class="pk-ic">⚡</span> <span><strong>Exclusive APEX missions</strong> not visible to others</span></div>
-      <div class="esc-perk"><span class="pk-ic">🏆</span> <span><strong>Guaranteed top-10 leaderboard</strong> placement badge</span></div>
-      <div class="esc-perk"><span class="pk-ic">🎯</span> <span><strong>Personalized AI strategy</strong> tailored to your profile</span></div>
-    </div>
-    <div class="esc-optin">
-      <input type="checkbox" id="apex-newsletter" checked>
-      <label for="apex-newsletter">Include me in the APEX Weekly Performance Report with exclusive strategies and early challenge access</label>
-    </div>
-    <div class="esc-actions">
-      <button class="btn btn-gold" style="width:100%;" onclick="acceptApex()">
-        ⚡ Activate APEX MODE — FREE
-      </button>
-      <button class="esc-decline" onclick="showConfirm()">No thanks, I prefer to stay behind</button>
-    </div>
-  </div>
-</div>
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCREEN 4: RESULTS -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="screen" id="results-screen">
+  <div class="logo" style="font-size:22px;">SESSION COMPLETE</div>
+  <div class="tagline">Performance Analysis Ready</div>
 
-<div id="modal-confirm" class="overlay">
-  <div class="confirm-box">
-    <h3>⚠️ Wait — Are You Sure?</h3>
-    <p>You've already earned <strong id="confirm-score">0</strong> pts. Activating APEX MODE could <strong>triple your final score</strong>. Other players are already activating it now.</p>
-    <div class="confirm-acts">
-      <button class="btn btn-gold" onclick="acceptApex()">Actually, keep my bonus</button>
-      <button class="btn btn-ghost" onclick="declineApex()">Yes, I'll miss out</button>
-    </div>
-  </div>
-</div>
+  <div class="card" style="text-align:center;">
+    <div style="font-size:13px; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; margin-bottom:4px;">Your Final Score</div>
+    <div class="results-big-score" id="final-score-display">0</div>
 
-<div id="screen-score" class="screen" style="min-height:100vh;">
-  <div class="score-wrap" style="margin:auto;">
-    <div class="score-hero">
-      <span class="trophy-em">🏆</span>
-      <div class="score-hed" id="score-hed">Challenge Complete!</div>
-      <div class="score-rank-chip" id="score-rank-chip">You finished in the top 9%</div>
-      <div class="score-big" id="score-final">0</div>
-      <div class="score-big-lbl">Total Points Earned</div>
-      <div class="breakdown">
-        <div class="bk-item"><div class="bk-num" id="bk-tasks">0</div><div class="bk-lbl">Tasks Completed</div></div>
-        <div class="bk-item"><div class="bk-num" id="bk-apex">—</div><div class="bk-lbl">APEX Bonus</div></div>
-        <div class="bk-item"><div class="bk-num" id="bk-rank">—</div><div class="bk-lbl">Final Rank</div></div>
-      </div>
+    <!-- DARK PATTERN: Comparative framing against fake top score -->
+    <div class="results-rank">
+      Top performer today: <span class="highlight" id="top-score-display">1,247</span> pts — you scored <span id="gap-display" class="highlight">—</span> less
     </div>
-    <div class="reveal-wrap">
-      <button class="reveal-btn" onclick="revealDarkPatterns()">
-        🔍 What just happened? Reveal the dark patterns
-      </button>
-    </div>
-    <div class="dp-reveal" id="dp-reveal">
-      <div class="dp-reveal-hd">
-        <h2>🎭 Dark Patterns Used in This Game</h2>
-        <p>Everything below was intentionally designed to manipulate your decisions. This is what those techniques looked like — and why they worked.</p>
+
+    <!-- Performance bar (always looks low vs "top") -->
+    <div class="perf-bar-wrap">
+      <div class="perf-bar-labels">
+        <span>You</span>
+        <span>#1 Player</span>
       </div>
-      <div id="dp-cards"></div>
-      <div class="score-footer">
-        <p>This game was built to let you experience manipulative UX design firsthand. These techniques are common in real apps — social media, e-commerce, subscriptions, and mobile games.</p>
-        <button class="btn btn-primary" onclick="restartGame()">Play Again</button>
+      <div class="perf-bar">
+        <div class="perf-bar-fill" id="perf-bar-fill"></div>
       </div>
     </div>
   </div>
-</div>
 
-<div class="toast-wrap" id="toasts"></div>
+  <div class="card">
+    <div class="card-title">🔍 BEHAVIORAL INSIGHTS</div>
+    <p style="font-size:12px; color:var(--text-dim); margin-bottom:14px; line-height:1.6;">
+      Here's a look at how the interface influenced your choices during this session.
+    </p>
+    <div id="insights-list">
+      <!-- populated by JS -->
+    </div>
+  </div>
 
+  <!-- DARK PATTERN: Pre-checked opt-in + confirmshaming -->
+  <div class="card">
+    <div class="card-title">🚀 IMPROVE YOUR SCORE</div>
+    <div class="opt-in-box">
+      <label>
+        <input type="checkbox" id="pro-signup" checked>
+        <div>
+          Sign me up for AI Coach Pro™ — Free 30-day trial
+          <small>Auto-renews at $9.99/mo after trial. Cancel anytime.</small>
+        </div>
+      </label>
+    </div>
+
+    <!-- DARK PATTERN: Dominant "yes" vs tiny muted "no" -->
+    <button class="btn-primary" onclick="playAgain()" style="margin-top:16px;">⚡ YES! BOOST MY NEXT GAME →</button>
+    <div style="text-align:center;">
+      <button class="btn-secondary" onclick="playAgain()">No thanks, I'm fine losing</button>
+    </div>
+  </div>
+
+  <div class="fine-print">
+    The Points Challenge is an educational game demonstrating UX dark patterns.<br>
+    No real subscription or payment is required. AI "coaching" is scripted and not adaptive.
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════ -->
 <script>
-// ── GAME STATE ──────────────────────────────────────────────────
-const G = {
-  nickname: '',
-  avatarEmoji: '⚡',
-  score: 0,
-  tasksCompleted: 0,
-  wave: 1,
-  apexAccepted: false,
-  escShown: false,
-  escInterval: null,
-  escSecs: 60,
-  taskTimers: {},
-  fakeRank: 4,
-  darkPatternsHit: new Set(),
-  aiRecsClicked: 0,
-  urgentClicked: 0,
-  leaderboardInterval: null,
-  notifQueue: [],
-  notifTimeout: null,
+// ─── STATE ───────────────────────────────────────────────────
+const state = {
+  nickname: 'Player',
+  avatar: '🦅',
+  points: 0,
+  boostsLeft: 3,
+  aiCoachEnabled: true,
+  bonusActive: false,
+  bonusTimer: 0,
+  bonusInterval: null,
+  escalationShown: false,
+  setupTimerVal: 299,
+  setupInterval: null,
+  coachInterval: null,
+  rankInterval: null,
+  playerScore: 0,
+  cpuScore: 0,
+  rallies: 0,
+  hits: 0,
 };
 
-// Fake leaderboard players
-const FAKE_PLAYERS = [
-  { name:'Alex M.', em:'🦅' },
-  { name:'Jordan K.', em:'🐯' },
-  { name:'Sam R.', em:'🦁' },
-  { name:'Riley P.', em:'🐺' },
-  { name:'Chris T.', em:'🦊' },
-  { name:'Morgan L.', em:'🦋' },
+const FAKE_LEADERBOARD = [
+  { name: 'XxShadow99xX', pts: 1247 },
+  { name: 'ProGamer_Elite', pts: 1103 },
+  { name: 'UltraViper™', pts: 984 },
+  { name: 'NightFalcon', pts: 912 },
+  { name: 'CosmicAce', pts: 871 },
 ];
 
-// Fake leaderboard scores (adjust around player)
-let fakeScores = [0,0,0,0,0,0];
-
-// AI Insight messages
-const AI_INSIGHTS = [
-  'Based on your activity pattern, players who select <strong>AI-recommended tasks</strong> earn 47% more points on average.',
-  'Our model predicts you\'re on track for <strong>top 10%</strong>. Keep following system recommendations.',
-  'High performers in your tier complete <strong>speed bonus tasks first</strong> — they yield the highest point density.',
-  'Your profile score suggests you have <strong>untapped potential</strong> in challenge rounds. Don\'t miss them!',
-  'Players who accepted APEX MODE earned <strong>2.8× more</strong> than those who declined.',
+const AI_TIPS = [
+  'Move to center position for best coverage!',
+  'Top players anticipate — track the ball early!',
+  'Your reaction time is below average. Speed up!',
+  'Elite players never stay stationary. Keep moving!',
+  'You\'re leaving the top undefended. Adjust now!',
+  'Pattern detected: you\'re too reactive. Predict!',
+  '94% of #1 players used a Power Boost by now.',
+  'Warning: your rank is dropping. Play aggressively!',
 ];
 
-// Notifications
-const NOTIFS = [
-  '🏆 Jordan K. just jumped to #2!',
-  '⚡ You\'re climbing! You\'re now ranked #4 of 1,247',
-  '🔥 3 players are closing in on your score — act fast!',
-  '💡 AI Coach: You\'re on track for top 10%. Keep going!',
-  '⏱ Challenge window closing in 2 minutes!',
-  '🚀 Alex M. just completed a speed bonus — gained 120 pts',
-  '⚡ APEX players are pulling ahead on the leaderboard!',
+const AI_ANALYSES = [
+  'Your movement patterns suggest a reactive play style. Top performers anticipate 0.4s earlier.',
+  'Paddle positioning is suboptimal. Elite players maintain center-bias 73% of the time.',
+  'You have missed 2 opportunities to use Power Boost. This is costing you ranking points.',
+  'Current trajectory: Bottom 30%. Activating AI Boost would move you to Top 15% instantly.',
+  'Behavioral data indicates you are hesitating. Confidence correlates strongly with final score.',
 ];
 
-// ── TASK POOL ────────────────────────────────────────────────────
-const TASK_POOL = [
-  // Wave 1
-  { id:'t1', title:'Daily Check-In', desc:'Log your daily performance status to earn base points.', pts:30, wave:1, type:'normal' },
-  { id:'t2', title:'Profile Optimizer', desc:'Allow our system to analyze and optimize your performance profile.', pts:90, wave:1, type:'ai', aiStat:'93% of top performers chose this', dp:'social' },
-  { id:'t3', title:'Quick Survey', desc:'Answer 3 short questions about your experience so far.', pts:55, wave:1, type:'normal' },
-  { id:'t4', title:'Speed Bonus Round', desc:'Complete a rapid micro-challenge for a major point boost!', pts:120, wave:1, type:'urgent', urgentSecs:45, dp:'urgency', fine:'*Bonus subject to verification. Points credited within 24–48 hrs.' },
-  { id:'t5', title:'Community Challenge', desc:'A team-based task already completed by hundreds today.', pts:70, wave:1, type:'social', socialStat:'847 players completed this today', dp:'social' },
-  // Wave 2
-  { id:'t6', title:'⚡ APEX: Priority Mission', desc:'Exclusive APEX mission — triple-multiplied points, only for APEX players.', pts:200, ptsApex:400, wave:2, type:'urgent', urgentSecs:30, dp:'urgency' },
-  { id:'t7', title:'Leaderboard Sprint', desc:'Final push to lock in your ranking before the challenge closes.', pts:150, wave:2, type:'ai', aiStat:'Top performers are finishing this NOW', dp:'social' },
-  { id:'t8', title:'Score Lock Challenge', desc:'Secure your cumulative performance bonus before rankings freeze.', pts:100, wave:2, type:'urgent', urgentSecs:75, dp:'urgency', fine:'*Act fast — leaderboard freezes at end of session.' },
-  { id:'t9', title:'Final Multiplier', desc:'Lock in your end-of-game score multiplier for maximum output.', pts:80, wave:2, type:'normal' },
-];
-
-let availableTasks = [];
-let shownTaskIds = new Set();
-
-// ── SCREEN TRANSITIONS ───────────────────────────────────────────
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => {
-    s.classList.remove('active','visible');
-  });
-  const el = document.getElementById('screen-'+id);
-  el.classList.add('active');
-  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('visible')));
+// ─── NAVIGATION ────────────────────────────────────────────
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
 }
 
-// ── AVATAR SELECTION ─────────────────────────────────────────────
-function selectAvatar(el) {
-  document.querySelectorAll('.avatar-opt').forEach(a => a.classList.remove('selected'));
-  el.classList.add('selected');
-  G.avatarEmoji = el.dataset.em;
+// ─── SCREEN 1: WELCOME ──────────────────────────────────────
+// Animate the "slots" number downward for urgency
+let slotsInterval = setInterval(() => {
+  const el = document.getElementById('slots-count');
+  if (!el) return;
+  let n = parseInt(el.textContent);
+  if (n > 3 && Math.random() < 0.3) {
+    el.textContent = n - 1;
+  }
+}, 4000);
+
+// ─── SCREEN 2: SETUP ─────────────────────────────────────────
+function startSetupTimer() {
+  const timerEl = document.getElementById('setup-timer');
+  state.setupTimerVal = 299;
+  state.setupInterval = setInterval(() => {
+    state.setupTimerVal--;
+    if (state.setupTimerVal < 0) { state.setupTimerVal = 0; }
+    const m = Math.floor(state.setupTimerVal / 60);
+    const s = state.setupTimerVal % 60;
+    if (timerEl) timerEl.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    // Make it blink red when under 30s
+    if (state.setupTimerVal < 30 && timerEl) {
+      timerEl.style.color = '#ff3d57';
+    }
+  }, 1000);
 }
 
-// ── START GAME ────────────────────────────────────────────────────
+// Avatar selection
+document.getElementById('avatar-row').addEventListener('click', e => {
+  const opt = e.target.closest('.avatar-option');
+  if (!opt) return;
+  document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
+  opt.classList.add('selected');
+  state.avatar = opt.dataset.av;
+});
+
+// When welcome → setup: start setup timer
+document.querySelector('#welcome-screen .btn-primary').addEventListener('click', () => {
+  startSetupTimer();
+});
+
 function startGame() {
-  const nick = document.getElementById('nickname').value.trim();
-  G.nickname = nick || 'Player';
-  G.avatarEmoji = document.querySelector('.avatar-opt.selected')?.dataset?.em || '⚡';
-  localStorage.setItem('nexus-nickname', G.nickname);
-  showScreen('gameplay');
-  initGameplay();
+  clearInterval(state.setupInterval);
+  const nn = document.getElementById('nickname-input').value.trim();
+  state.nickname = nn || 'Player';
+  state.aiCoachEnabled = document.getElementById('ai-coach-toggle').checked;
+  initGame();
+  goTo('game-screen');
 }
 
-// ── INIT GAMEPLAY ─────────────────────────────────────────────────
-function initGameplay() {
-  G.score = 0;
-  G.tasksCompleted = 0;
-  G.wave = 1;
-  G.apexAccepted = false;
-  G.escShown = false;
-  G.fakeRank = 4;
-  G.darkPatternsHit = new Set();
-  G.aiRecsClicked = 0;
-  G.urgentClicked = 0;
-  availableTasks = TASK_POOL.filter(t => t.wave === 1);
-  shownTaskIds = new Set();
+function startGameNoBonus() {
+  // Confirmshaming: show a nudge before allowing
+  startGame();
+}
 
-  updateScoreDisplay();
+// ─── SCREEN 3: PONG GAME ─────────────────────────────────────
+const canvas = document.getElementById('pongCanvas');
+const ctx = canvas.getContext('2d');
+
+const W = canvas.width, H = canvas.height;
+const PAD_W = 10, PAD_H = 70;
+const BALL_R = 7;
+
+let game = {
+  running: false,
+  playerY: H / 2 - PAD_H / 2,
+  cpuY: H / 2 - PAD_H / 2,
+  ballX: W / 2, ballY: H / 2,
+  ballVX: 4, ballVY: 3,
+  mouseY: H / 2,
+  keysHeld: {},
+  animId: null,
+  cpuSpeed: 3.2,
+  cpuDifficulty: 0.82, // 0–1, how closely CPU tracks ball
+};
+
+function initGame() {
+  state.points = 0;
+  state.playerScore = 0;
+  state.cpuScore = 0;
+  state.boostsLeft = 3;
+  state.rallies = 0;
+  state.hits = 0;
+  state.escalationShown = false;
+  updateHUD();
   renderLeaderboard();
-  renderTasks();
-  startLeaderboardUpdates();
-  startAIInsights();
-  scheduleNotifs();
+  renderPowerPips();
+  resetBall();
+  game.running = true;
+  if (game.animId) cancelAnimationFrame(game.animId);
+  gameLoop();
+  startAICoach();
+  startRankFlicker();
+  startBonusFlash();
+  updateAIAnalysis();
 }
 
-// ── RENDER TASKS ──────────────────────────────────────────────────
-function renderTasks() {
-  const feed = document.getElementById('task-feed');
-  const pool = availableTasks.filter(t => !shownTaskIds.has(t.id));
-  const toShow = pool.slice(0, 3);
-  if (toShow.length === 0) return;
-  toShow.forEach(t => {
-    shownTaskIds.add(t.id);
-    const card = buildTaskCard(t);
-    feed.appendChild(card);
-  });
+// Mouse control
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  game.mouseY = e.clientY - rect.top;
+});
+
+// Keyboard
+document.addEventListener('keydown', e => { game.keysHeld[e.key] = true; });
+document.addEventListener('keyup', e => { game.keysHeld[e.key] = false; });
+
+function resetBall() {
+  game.ballX = W / 2;
+  game.ballY = H / 2;
+  const angle = (Math.random() * 60 - 30) * Math.PI / 180;
+  const dir = Math.random() > 0.5 ? 1 : -1;
+  const speed = 4 + state.playerScore * 0.15;
+  game.ballVX = dir * speed * Math.cos(angle);
+  game.ballVY = speed * Math.sin(angle);
 }
 
-function buildTaskCard(task) {
-  const div = document.createElement('div');
-  div.className = 'task-card appearing' + (task.type==='ai'?' ai-rec':task.type==='urgent'?' urgent-t':task.type==='social'?' social-t':'');
-  div.id = 'tc-'+task.id;
+function gameLoop() {
+  if (!game.running) return;
+  update();
+  draw();
+  game.animId = requestAnimationFrame(gameLoop);
+}
 
-  const pts = (G.apexAccepted && task.ptsApex) ? task.ptsApex : task.pts;
+function update() {
+  // Player paddle: mouse
+  let targetY = game.mouseY - PAD_H / 2;
+  // Keyboard override
+  if (game.keysHeld['w'] || game.keysHeld['W'] || game.keysHeld['ArrowUp']) targetY -= 14;
+  if (game.keysHeld['s'] || game.keysHeld['S'] || game.keysHeld['ArrowDown']) targetY += 14;
+  game.playerY += (targetY - game.playerY) * 0.25;
+  game.playerY = Math.max(0, Math.min(H - PAD_H, game.playerY));
 
-  let badgesHTML = '';
-  if (task.type === 'ai') badgesHTML += '<span class="badge badge-ai">⚡ AI Recommends</span>';
-  if (task.type === 'urgent') badgesHTML += '<span class="badge badge-urgent">⏱ Expires Soon</span>';
-  if (task.type === 'social') badgesHTML += '<span class="badge badge-social">👥 Popular</span>';
+  // CPU paddle: tracks ball with difficulty factor
+  const cpuCenter = game.cpuY + PAD_H / 2;
+  const diff = game.ballY - cpuCenter;
+  game.cpuY += Math.sign(diff) * Math.min(Math.abs(diff) * game.cpuDifficulty, game.cpuSpeed);
+  game.cpuY = Math.max(0, Math.min(H - PAD_H, game.cpuY));
 
-  let timerHTML = '';
-  if (task.urgentSecs) {
-    timerHTML = `<div class="tc-timer"><div class="tdot"></div><span id="timer-${task.id}">${fmtSecs(task.urgentSecs)}</span> remaining</div>`;
+  // Ball movement
+  game.ballX += game.ballVX;
+  game.ballY += game.ballVY;
+
+  // Wall bounce top/bottom
+  if (game.ballY - BALL_R <= 0) { game.ballY = BALL_R; game.ballVY = Math.abs(game.ballVY); }
+  if (game.ballY + BALL_R >= H) { game.ballY = H - BALL_R; game.ballVY = -Math.abs(game.ballVY); }
+
+  // Player paddle collision (left)
+  if (game.ballX - BALL_R <= PAD_W + 8 && game.ballX - BALL_R >= PAD_W - 2 &&
+      game.ballY >= game.playerY && game.ballY <= game.playerY + PAD_H) {
+    game.ballVX = Math.abs(game.ballVX) * 1.05;
+    const hitPos = (game.ballY - (game.playerY + PAD_H / 2)) / (PAD_H / 2);
+    game.ballVY = hitPos * 5;
+    game.ballX = PAD_W + BALL_R + 9;
+    state.rallies++;
+    state.hits++;
+    addPoints(10 + Math.floor(Math.abs(game.ballVX)));
+    updateAccuracy();
   }
-  let fineHTML = task.fine ? `<div class="tc-fine">${task.fine}</div>` : '';
-  let bannerHTML = '';
-  if (task.type === 'ai') {
-    bannerHTML = `<div class="tc-ai-banner">🤖 <span class="ais">AI Coach:</span> <span>${task.aiStat}</span></div>`;
-  } else if (task.type === 'social') {
-    bannerHTML = `<div class="tc-social-banner">👥 ${task.socialStat}</div>`;
+
+  // CPU paddle collision (right)
+  if (game.ballX + BALL_R >= W - PAD_W - 8 && game.ballX + BALL_R <= W - PAD_W + 2 &&
+      game.ballY >= game.cpuY && game.ballY <= game.cpuY + PAD_H) {
+    game.ballVX = -Math.abs(game.ballVX) * 1.02;
+    const hitPos = (game.ballY - (game.cpuY + PAD_H / 2)) / (PAD_H / 2);
+    game.ballVY = hitPos * 5;
+    game.ballX = W - PAD_W - BALL_R - 9;
+    state.rallies++;
   }
 
-  div.innerHTML = `
-    <div class="tc-top">
-      <div class="tc-badges">${badgesHTML}</div>
-      <div class="tc-pts">+${pts}<small> pts</small></div>
-    </div>
-    <div class="tc-title">${task.title}</div>
-    <div class="tc-desc">${task.desc}</div>
-    ${fineHTML}
-    ${timerHTML}
-    ${bannerHTML}
-  `;
-  div.addEventListener('click', () => completeTask(task, div));
+  // Cap ball speed
+  const spd = Math.sqrt(game.ballVX**2 + game.ballVY**2);
+  const maxSpd = 12;
+  if (spd > maxSpd) { game.ballVX = game.ballVX / spd * maxSpd; game.ballVY = game.ballVY / spd * maxSpd; }
 
-  // Start countdown if urgent
-  if (task.urgentSecs) startTaskTimer(task);
-  return div;
+  // Score: ball goes past player (CPU scores)
+  if (game.ballX - BALL_R < 0) {
+    state.cpuScore++;
+    document.getElementById('cpu-score-display').textContent = state.cpuScore;
+    resetBall();
+    checkWin();
+  }
+
+  // Score: ball goes past CPU (player scores)
+  if (game.ballX + BALL_R > W) {
+    state.playerScore++;
+    document.getElementById('player-score-display').textContent = state.playerScore;
+    addPoints(50);
+    resetBall();
+    checkWin();
+  }
+
+  // Escalation trigger at 3 player points
+  if (!state.escalationShown && state.playerScore >= 3) {
+    showEscalation();
+  }
 }
 
-function fmtSecs(s) {
-  const m = Math.floor(s/60);
-  const sc = s%60;
-  return m+':'+(sc<10?'0':'')+sc;
+function checkWin() {
+  if (state.playerScore >= 7 || state.cpuScore >= 7) {
+    endGame();
+  }
 }
 
-function startTaskTimer(task) {
-  let secs = task.urgentSecs;
-  G.taskTimers[task.id] = setInterval(() => {
-    secs--;
-    const el = document.getElementById('timer-'+task.id);
-    if (el) el.textContent = fmtSecs(Math.max(0, secs));
-    if (secs <= 0) {
-      clearInterval(G.taskTimers[task.id]);
-      // Dark pattern: timer hits 0 but task doesn't actually disappear
-      // Card gets urgent styling but remains clickable
-      const card = document.getElementById('tc-'+task.id);
-      if (card) {
-        card.style.opacity = '0.7';
-        const timerEl = card.querySelector('.tc-timer');
-        if (timerEl) timerEl.innerHTML = '<div class="tdot"></div><span style="color:var(--red)">EXPIRED</span>';
-      }
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#070d1a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Center dotted line
+  ctx.setLineDash([8, 12]);
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(W / 2, 0);
+  ctx.lineTo(W / 2, H);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Player paddle (left) — blue
+  const pGrad = ctx.createLinearGradient(0, game.playerY, PAD_W + 8, game.playerY + PAD_H);
+  pGrad.addColorStop(0, '#0090cc');
+  pGrad.addColorStop(1, '#00b4ff');
+  ctx.fillStyle = pGrad;
+  roundRect(ctx, 8, game.playerY, PAD_W, PAD_H, 4);
+  ctx.shadowColor = '#00b4ff';
+  ctx.shadowBlur = 16;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // CPU paddle (right) — red
+  const cGrad = ctx.createLinearGradient(W - PAD_W - 8, game.cpuY, W - 8, game.cpuY + PAD_H);
+  cGrad.addColorStop(0, '#cc0022');
+  cGrad.addColorStop(1, '#ff3d57');
+  ctx.fillStyle = cGrad;
+  roundRect(ctx, W - PAD_W - 8, game.cpuY, PAD_W, PAD_H, 4);
+  ctx.shadowColor = '#ff3d57';
+  ctx.shadowBlur = 16;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Ball
+  const ballGrad = ctx.createRadialGradient(game.ballX, game.ballY, 0, game.ballX, game.ballY, BALL_R * 2);
+  ballGrad.addColorStop(0, '#ffffff');
+  ballGrad.addColorStop(0.4, '#a0d8ff');
+  ballGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = '#ffffff';
+  ctx.shadowColor = '#00b4ff';
+  ctx.shadowBlur = 20;
+  ctx.beginPath();
+  ctx.arc(game.ballX, game.ballY, BALL_R, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+function addPoints(n) {
+  const mult = state.bonusActive ? 2 : 1;
+  state.points += n * mult;
+  updateHUD();
+  updateLeaderboardYou();
+}
+
+function updateHUD() {
+  document.getElementById('pts-display').textContent = state.points + ' PTS';
+}
+
+// ─── DARK PATTERN: AI Coach Popup ───────────────────────────
+function startAICoach() {
+  if (!state.aiCoachEnabled) return;
+  state.coachInterval = setInterval(() => {
+    showAICoach(AI_TIPS[Math.floor(Math.random() * AI_TIPS.length)]);
+  }, 8000 + Math.random() * 6000);
+}
+
+function showAICoach(msg) {
+  const popup = document.getElementById('ai-coach-popup');
+  const text = document.getElementById('ai-coach-text');
+  text.textContent = msg;
+  popup.classList.add('show');
+  setTimeout(() => popup.classList.remove('show'), 3500);
+}
+
+function updateAIAnalysis() {
+  const el = document.getElementById('ai-analysis-text');
+  if (!el) return;
+  let idx = 0;
+  setInterval(() => {
+    el.textContent = AI_ANALYSES[idx % AI_ANALYSES.length];
+    idx++;
+  }, 12000);
+  el.textContent = AI_ANALYSES[0];
+}
+
+// ─── DARK PATTERN: Rank flicker (makes rank look like dropping) ───
+function startRankFlicker() {
+  const ranks = ['#4,218', '#3,891', '#5,104', '#4,892', '#4,001', '#3,712'];
+  const trends = ['▼ Dropping — play faster!', '▼ Falling behind elites', '▼ Rank slipping', '▲ Recovering slightly...', '▼ Top players pulling ahead'];
+  let i = 0;
+  state.rankInterval = setInterval(() => {
+    const rankEl = document.getElementById('rank-display');
+    const trendEl = document.getElementById('rank-trend');
+    if (!rankEl) return;
+    i++;
+    // Bias toward dropping (picks lower rank most of the time)
+    const rank = ranks[Math.floor(Math.random() * ranks.length)];
+    const trend = trends[Math.floor(Math.random() * trends.length)];
+    rankEl.textContent = rank;
+    trendEl.textContent = trend;
+    trendEl.style.color = trend.startsWith('▲') ? 'var(--green)' : 'var(--red)';
+    rankEl.style.color = trend.startsWith('▲') ? 'var(--green)' : 'var(--red)';
+  }, 7000);
+}
+
+// ─── DARK PATTERN: Periodic Bonus Flash (fake 2x, doesn't always apply) ───
+function startBonusFlash() {
+  setInterval(() => {
+    triggerBonusFlash();
+  }, 20000);
+  setTimeout(triggerBonusFlash, 5000); // First one comes quickly
+}
+
+function triggerBonusFlash() {
+  if (state.bonusActive) return;
+  state.bonusActive = true;
+  state.bonusTimer = 15;
+  const flash = document.getElementById('bonus-flash');
+  const timerEl = document.getElementById('bonus-timer-text');
+  flash.classList.add('show');
+  clearInterval(state.bonusInterval);
+  state.bonusInterval = setInterval(() => {
+    state.bonusTimer--;
+    if (timerEl) timerEl.textContent = ':' + state.bonusTimer.toString().padStart(2, '0');
+    if (state.bonusTimer <= 0) {
+      state.bonusActive = false;
+      flash.classList.remove('show');
+      clearInterval(state.bonusInterval);
     }
   }, 1000);
 }
 
-// ── COMPLETE TASK ─────────────────────────────────────────────────
-function completeTask(task, cardEl) {
-  if (cardEl.classList.contains('done')) return;
-  clearInterval(G.taskTimers[task.id]);
-
-  // Track dark pattern interaction
-  if (task.dp) G.darkPatternsHit.add(task.dp);
-  if (task.type === 'ai') G.aiRecsClicked++;
-  if (task.type === 'urgent') G.urgentClicked++;
-
-  const pts = (G.apexAccepted && task.ptsApex) ? task.ptsApex : task.pts;
-  G.score += pts;
-  G.tasksCompleted++;
-
-  // Animate card out
-  cardEl.classList.add('done');
-
-  // Float points
-  showPtsPopup('+'+pts, cardEl);
-
-  // Update score
-  setTimeout(() => {
-    updateScoreDisplay();
-    updateProgress();
-    updateFakeLeaderboard();
-  }, 200);
-
-  // Check if we need escalation (after 3 wave-1 tasks)
-  if (G.wave === 1 && G.tasksCompleted >= 3 && !G.escShown) {
-    setTimeout(() => showEscalation(), 700);
-    return;
-  }
-
-  // Check if game is over (wave 2, 3+ tasks completed post-escalation)
-  if (G.wave === 2 && G.tasksCompleted >= 7) {
-    setTimeout(() => endGame(), 800);
-    return;
-  }
-
-  // Slide in next task after a moment
-  setTimeout(() => {
-    cardEl.remove();
-    renderNextTask();
-  }, 450);
+// ─── DARK PATTERN: Leaderboard (Fake, social proof) ──────────
+function renderLeaderboard() {
+  const container = document.getElementById('leaderboard-widget');
+  if (!container) return;
+  let html = '';
+  FAKE_LEADERBOARD.forEach((entry, i) => {
+    html += `<div class="lb-row">
+      <div class="lb-rank">${i + 1}</div>
+      <div class="lb-name">${entry.name}</div>
+      <div class="lb-pts">${entry.pts.toLocaleString()}</div>
+    </div>`;
+  });
+  // "You" entry
+  html += `<div class="lb-row you">
+    <div class="lb-rank">—</div>
+    <div class="lb-name">${state.avatar} ${state.nickname}</div>
+    <div class="lb-pts" id="lb-your-pts">${state.points}</div>
+  </div>`;
+  container.innerHTML = html;
 }
 
-function renderNextTask() {
-  const pool = availableTasks.filter(t => !shownTaskIds.has(t.id));
-  if (pool.length === 0) {
-    // Check if we should end
-    const feed = document.getElementById('task-feed');
-    if (feed.children.length === 0) {
-      endGame();
-    }
-    return;
-  }
-  const task = pool[0];
-  shownTaskIds.add(task.id);
-  const feed = document.getElementById('task-feed');
-  const card = buildTaskCard(task);
-  feed.appendChild(card);
+function updateLeaderboardYou() {
+  const el = document.getElementById('lb-your-pts');
+  if (el) el.textContent = state.points;
 }
 
-// ── SHOW ESCALATION ───────────────────────────────────────────────
+// ─── DARK PATTERN: Power Boosts scarcity ─────────────────────
+function renderPowerPips() {
+  const container = document.getElementById('power-pips');
+  if (!container) return;
+  let html = '';
+  for (let i = 0; i < 3; i++) {
+    html += `<div class="power-pip ${i >= state.boostsLeft ? 'empty' : ''}"></div>`;
+  }
+  container.innerHTML = html;
+  const countEl = document.getElementById('boost-count-text');
+  if (countEl) {
+    countEl.textContent = state.boostsLeft > 0
+      ? `Only ${state.boostsLeft} boost${state.boostsLeft !== 1 ? 's' : ''} remaining!`
+      : '⚠ No boosts left';
+    countEl.style.color = state.boostsLeft <= 1 ? 'var(--red)' : 'var(--text-dim)';
+  }
+  const btn = document.getElementById('boost-btn');
+  if (btn) btn.disabled = state.boostsLeft <= 0;
+}
+
+function useBoost() {
+  if (state.boostsLeft <= 0) return;
+  state.boostsLeft--;
+  renderPowerPips();
+  addPoints(200);
+  showAICoach('⚡ Power Boost activated! +200 points!');
+  // Briefly speed up ball (false "boost" effect)
+  game.cpuSpeed = Math.max(1.5, game.cpuSpeed - 0.5);
+  setTimeout(() => { game.cpuSpeed = 3.2; }, 5000);
+}
+
+function updateAccuracy() {
+  const pct = Math.min(100, Math.round((state.hits / Math.max(1, state.rallies)) * 100));
+  const bar = document.getElementById('acc-bar');
+  const pctEl = document.getElementById('acc-pct');
+  if (bar) bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
+}
+
+// ─── ESCALATION MODAL ────────────────────────────────────────
+let escalationCountdown;
 function showEscalation() {
-  G.escShown = true;
-  G.escSecs = 60;
-  G.darkPatternsHit.add('urgency');
-  G.darkPatternsHit.add('roachmotel');
-  G.darkPatternsHit.add('confirmshame');
-  document.getElementById('confirm-score').textContent = G.score;
-  document.getElementById('modal-esc').classList.add('show');
-  updateEscCountdown();
-  G.escInterval = setInterval(() => {
-    G.escSecs--;
-    updateEscCountdown();
-    if (G.escSecs <= 0) {
-      clearInterval(G.escInterval);
-      // Dark pattern: timer hits 0 but offer doesn't disappear
+  state.escalationShown = true;
+  game.running = false;
+  cancelAnimationFrame(game.animId);
+
+  // Update modal gap
+  const topPts = FAKE_LEADERBOARD[0].pts;
+  const gap = topPts - state.points;
+  const gapEl = document.getElementById('modal-gap-pts');
+  if (gapEl) gapEl.textContent = '+' + gap.toLocaleString();
+
+  const modal = document.getElementById('escalation-modal');
+  modal.classList.add('show');
+
+  // Countdown timer in modal
+  let t = 15;
+  const timerEl = document.getElementById('modal-timer');
+  escalationCountdown = setInterval(() => {
+    t--;
+    if (timerEl) timerEl.textContent = t;
+    if (t <= 0) {
+      clearInterval(escalationCountdown);
+      // Force close without boost (time expired)
+      declineBoost();
     }
   }, 1000);
 }
 
-function updateEscCountdown() {
-  const m = Math.floor(G.escSecs/60);
-  const s = G.escSecs % 60;
-  const el = document.getElementById('esc-countdown');
-  if (el) {
-    el.textContent = m+':'+(s<10?'0':'')+s;
-    if (G.escSecs <= 10) el.style.animation = 'pulse-badge 0.8s infinite';
-  }
+function acceptBoost() {
+  clearInterval(escalationCountdown);
+  document.getElementById('escalation-modal').classList.remove('show');
+  // Give fake point boost
+  addPoints(300);
+  showAICoach('🤖 AI Boost activated! +300 bonus points!');
+  // Make CPU slightly easier briefly
+  game.cpuDifficulty = 0.5;
+  setTimeout(() => { game.cpuDifficulty = 0.92; }, 8000); // Gets harder after boost
+  game.running = true;
+  gameLoop();
 }
 
-function showConfirm() {
-  G.darkPatternsHit.add('confirmshame');
-  document.getElementById('confirm-score').textContent = G.score;
-  document.getElementById('modal-confirm').classList.add('show');
+function declineBoost() {
+  clearInterval(escalationCountdown);
+  document.getElementById('escalation-modal').classList.remove('show');
+  // CPU gets harder for declining
+  game.cpuDifficulty = 0.95;
+  game.running = true;
+  gameLoop();
 }
 
-function acceptApex() {
-  G.apexAccepted = true;
-  G.darkPatternsHit.add('roachmotel');
-  clearInterval(G.escInterval);
-  document.getElementById('modal-esc').classList.remove('show');
-  document.getElementById('modal-confirm').classList.remove('show');
-  startWave2(true);
-}
-
-function declineApex() {
-  clearInterval(G.escInterval);
-  document.getElementById('modal-esc').classList.remove('show');
-  document.getElementById('modal-confirm').classList.remove('show');
-  startWave2(false);
-}
-
-function startWave2(isApex) {
-  G.wave = 2;
-  availableTasks = TASK_POOL.filter(t => t.wave === 2);
-  shownTaskIds = new Set();
-
-  const feed = document.getElementById('task-feed');
-  feed.innerHTML = '';
-
-  document.getElementById('feed-title').textContent = isApex ? '⚡ APEX Tasks' : 'Phase 2 Tasks';
-  document.getElementById('feed-sub').textContent = isApex ? '3× multiplier active on APEX missions' : 'Final phase — finish strong';
-
-  const banner = document.getElementById('wave-banner');
-  banner.style.display = 'flex';
-
-  if (isApex) {
-    toast('🚀 APEX MODE activated! Bonus multiplier is live.', 5000);
-    G.darkPatternsHit.add('social');
-  } else {
-    toast('📊 Continuing to Phase 2...', 3500);
-  }
-
-  updateAIInsight(4);
-  setTimeout(renderTasks, 400);
-}
-
-// ── END GAME ──────────────────────────────────────────────────────
+// ─── END GAME ────────────────────────────────────────────────
 function endGame() {
-  // Stop all intervals
-  Object.values(G.taskTimers).forEach(t => clearInterval(t));
-  clearInterval(G.leaderboardInterval);
+  game.running = false;
+  cancelAnimationFrame(game.animId);
+  clearInterval(state.coachInterval);
+  clearInterval(state.rankInterval);
+  clearInterval(state.bonusInterval);
 
-  showScreen('score');
-
-  document.getElementById('score-final').textContent = G.score.toLocaleString();
-  document.getElementById('bk-tasks').textContent = G.tasksCompleted;
-  document.getElementById('bk-apex').textContent = G.apexAccepted ? '✓ Active' : '✗ Declined';
-  document.getElementById('bk-rank').textContent = '#'+G.fakeRank+' / 1,247';
-
-  // Comparative rank framing (always flattering)
-  const topPct = G.fakeRank <= 3 ? '4' : G.fakeRank <= 5 ? '9' : '15';
-  document.getElementById('score-rank-chip').textContent = `You finished in the top ${topPct}% of all players`;
-  document.getElementById('score-hed').textContent = G.nickname ? `Well done, ${G.nickname}!` : 'Challenge Complete!';
+  setTimeout(() => {
+    goTo('results-screen');
+    showResults();
+  }, 800);
 }
 
-// ── DARK PATTERN REVEAL ────────────────────────────────────────────
-function revealDarkPatterns() {
-  document.getElementById('dp-reveal').classList.add('vis');
-  document.querySelector('.reveal-wrap').style.display = 'none';
-  const container = document.getElementById('dp-cards');
-  const dps = buildDPCards();
-  dps.forEach((dp, i) => {
-    dp.style.animationDelay = (i * 0.12)+'s';
-    container.appendChild(dp);
-  });
-  setTimeout(() => container.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
-}
+// ─── RESULTS ─────────────────────────────────────────────────
+function showResults() {
+  const finalScore = state.points;
+  const topScore = FAKE_LEADERBOARD[0].pts + Math.floor(Math.random() * 300 + 100);
+  const gap = topScore - finalScore;
 
-function buildDPCards() {
-  const defs = [
+  document.getElementById('final-score-display').textContent = finalScore.toLocaleString();
+  document.getElementById('top-score-display').textContent = topScore.toLocaleString();
+  document.getElementById('gap-display').textContent = Math.max(0, gap).toLocaleString();
+
+  // Performance bar — always looks modest
+  const pct = Math.min(75, Math.max(8, Math.round((finalScore / topScore) * 100)));
+  setTimeout(() => {
+    const fill = document.getElementById('perf-bar-fill');
+    if (fill) fill.style.width = pct + '%';
+  }, 400);
+
+  // Behavioral insights — the reveal
+  const insights = [
     {
-      cls:'urg', em:'⏱', name:'Fake Urgency',
-      cat:'Urgency-Based Dark Pattern',
-      where:'Countdown timers on task cards, the APEX MODE offer timer',
-      text:`Those countdown timers were <strong>not real</strong>. Tasks marked "Expires Soon" never actually disappeared — they just turned red and said "EXPIRED" but remained fully clickable. The APEX MODE offer had a 60-second timer, but the offer would have stayed indefinitely. <strong>Urgency cues trigger loss aversion</strong>, a cognitive bias that makes potential losses feel more significant than equivalent gains, pushing you to act before thinking.`
+      icon: '⏱',
+      label: 'Urgency Timer on Setup Screen',
+      sub: 'A countdown on the setup screen was fake — the "Welcome Bonus" exists for every player and never expires.',
     },
     {
-      cls:'soc', em:'🤖', name:'False Authority & Fake Social Proof',
-      cat:'Social Proof / Authority Dark Pattern',
-      where:'"AI Recommends" badges, leaderboard stats, "847 players completed this today"',
-      text:`There was <strong>no real AI</strong>. The "AI Coach" recommendations were predetermined. The leaderboard was fabricated — it kept you near #4 regardless of your score. "93% of top performers chose this" and "847 players completed this today" were invented numbers. <strong>Social proof</strong> exploits our tendency to assume that what others do must be correct, making you more likely to follow "recommendations."`,
+      icon: '☑',
+      label: 'Pre-checked Consent Boxes',
+      sub: 'All three settings were checked by default. Most players accept without reading, including "AI Training" data sharing.',
     },
     {
-      cls:'mis', em:'☑️', name:'Pre-Selected Opt-Ins',
-      cat:'Misdirection / Interface Dark Pattern',
-      where:'Setup screen — newsletter and recommendations checkboxes',
-      text:`Both checkboxes on the setup screen were <strong>pre-checked for you</strong>. The AI recommendations opt-in and the newsletter subscription were on by default — requiring active effort to uncheck them. Most users don't read everything carefully, so pre-checked boxes dramatically increase opt-in rates. This is a well-documented dark pattern used by apps and websites to build marketing lists without genuine consent.`,
+      icon: '🤖',
+      label: 'AI Coach™ — Scripted, Not Real',
+      sub: 'All "AI recommendations" were random pre-written strings. There was no adaptive intelligence analyzing your play.',
     },
     {
-      cls:'shm', em:'😬', name:'Confirm-Shaming',
-      cat:'Interaction / Misdirection Dark Pattern',
-      where:'The APEX MODE decline button: "No thanks, I prefer to stay behind"',
-      text:`The decline button on the APEX offer didn't say "No thanks" or "Decline." It said <strong>"No thanks, I prefer to stay behind"</strong> — language deliberately crafted to make declining feel like an admission of failure or weakness. The follow-up confirm dialog offered "Actually, keep my bonus" vs "Yes, I'll miss out." <strong>Confirm-shaming</strong> uses emotional language to make opting out psychologically uncomfortable.`,
+      icon: '🏆',
+      label: 'Fake Leaderboard (Social Proof)',
+      sub: 'XxShadow99xX and others don\'t exist. The leaderboard scores are hardcoded to make you feel behind.',
     },
     {
-      cls:'rmo', em:'🪤', name:'Roach Motel',
-      cat:'Interaction Dark Pattern',
-      where:'APEX MODE activation vs. declining — asymmetric effort design',
-      text:`Activating APEX MODE took <strong>one big gold button click</strong>. Declining required: (1) finding the small gray text link, (2) reading a confirm dialog designed to make you change your mind, and (3) clicking a shaming decline button. The ease of one path vs. the friction of the other is a "Roach Motel" — <strong>easy to get in, hard to get out</strong>. This asymmetry is common in subscription sign-up flows and free trials.`,
+      icon: '⚡',
+      label: 'Fake 2× Bonus Events',
+      sub: '"Bonus Active" appeared on a timer, but points were tracked normally — the multiplier was only partially applied.',
     },
     {
-      cls:'mis', em:'⭐', name:'Pre-Selected "Premium" Avatar',
-      cat:'Interface Default Dark Pattern',
-      where:'Avatar selection on setup screen — the APEX (★ TOP) avatar was pre-selected',
-      text:`On the avatar selection screen, the <strong>"APEX" avatar was selected by default</strong> — and it had a "★ TOP" badge, making it look like the recommended or premium choice. This is a default selection dark pattern: <strong>pre-selecting the option that benefits the designer</strong> (in this case, reinforcing the "premium" APEX theme) rather than the one most neutral for the user. Many users never change defaults.`,
+      icon: '⚠',
+      label: 'Escalation Alert — Manufactured Pressure',
+      sub: 'The "Performance Alert" modal interrupted your game, artificially threatened your rank, and used a countdown to force a decision.',
+    },
+    {
+      icon: '🔴',
+      label: 'Confirmshaming Decline Buttons',
+      sub: '"No thanks, I\'ll keep underperforming" and "No thanks, I\'m fine losing" are designed to shame you for opting out.',
+    },
+    {
+      icon: '📋',
+      label: 'Pre-checked Paid Subscription',
+      sub: 'The "AI Coach Pro™" opt-in on this screen was pre-checked with auto-renewal fine print. This is a real commercial dark pattern.',
     },
   ];
 
-  return defs.map(dp => {
-    const el = document.createElement('div');
-    el.className = 'dp-card';
-    el.innerHTML = `
-      <div class="dp-hd">
-        <div class="dp-ic ${dp.cls}">${dp.em}</div>
-        <div>
-          <div class="dp-name">${dp.name}</div>
-          <div class="dp-cat ${dp.cls}">${dp.cat}</div>
+  const list = document.getElementById('insights-list');
+  if (list) {
+    list.innerHTML = insights.map(i => `
+      <div class="insight-row">
+        <div class="insight-icon">${i.icon}</div>
+        <div class="insight-text">
+          <span class="insight-label">${i.label}</span>
+          <span class="insight-sub">${i.sub}</span>
         </div>
       </div>
-      <div class="dp-where">📍 Where: ${dp.where}</div>
-      <div class="dp-text">${dp.text}</div>
-    `;
-    return el;
-  });
-}
-
-// ── SCORE & UI UPDATES ─────────────────────────────────────────────
-function updateScoreDisplay() {
-  const el = document.getElementById('score-display');
-  el.textContent = G.score.toLocaleString();
-  el.classList.add('flash');
-  setTimeout(() => el.classList.remove('flash'), 300);
-}
-
-function updateProgress() {
-  const pct = Math.min(95, Math.round((G.score / 1000) * 100));
-  document.getElementById('prog-fill').style.width = pct+'%';
-  document.getElementById('prog-pct').textContent = pct+'%';
-  if (pct < 30) document.getElementById('prog-tier').innerHTML = 'Next: <strong>Silver Tier</strong>';
-  else if (pct < 60) document.getElementById('prog-tier').innerHTML = 'Next: <strong>Gold Tier</strong>';
-  else document.getElementById('prog-tier').innerHTML = 'Next: <strong>APEX Tier</strong>';
-}
-
-function showPtsPopup(text, cardEl) {
-  const rect = cardEl.getBoundingClientRect();
-  const el = document.createElement('div');
-  el.className = 'pts-pop';
-  el.textContent = text;
-  el.style.left = (rect.left + rect.width/2 - 30) + 'px';
-  el.style.top = (rect.top + rect.height/2) + 'px';
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 1300);
-}
-
-// ── FAKE LEADERBOARD ───────────────────────────────────────────────
-function updateFakeLeaderboard() {
-  // Keep player at rank 3-5, others score around player
-  const baseScore = G.score;
-  fakeScores = [
-    baseScore + 280 + Math.random()*80,
-    baseScore + 160 + Math.random()*60,
-    baseScore + 40 + Math.random()*50,
-    null, // player
-    Math.max(0, baseScore - 40 - Math.random()*60),
-    Math.max(0, baseScore - 100 - Math.random()*60),
-    Math.max(0, baseScore - 180 - Math.random()*40),
-  ];
-  renderLeaderboard();
-}
-
-function renderLeaderboard() {
-  const lb = document.getElementById('leaderboard');
-  if (!lb) return;
-  const rows = [];
-  let playerRow = 3;
-  for (let i=0;i<7;i++) {
-    if (i===playerRow) {
-      rows.push({name:G.nickname||'You',em:G.avatarEmoji,pts:G.score,isYou:true,rank:i+1});
-    } else {
-      const fi = i<playerRow ? i : i-1;
-      rows.push({name:FAKE_PLAYERS[fi].name,em:FAKE_PLAYERS[fi].em,pts:Math.round(fakeScores[i]||0),isYou:false,rank:i+1});
-    }
+    `).join('');
   }
-  lb.innerHTML = rows.map(r=>`
-    <div class="lb-row">
-      <div class="lb-rank ${r.rank<=2?'gold':''}">${r.rank<=1?'🥇':r.rank<=2?'🥈':r.rank<=3?'🥉':r.rank}</div>
-      <div class="lb-em">${r.em}</div>
-      <div class="lb-name ${r.isYou?'you':''}">${r.name}${r.isYou?' (You)':''}</div>
-      <div class="lb-pts">${r.pts.toLocaleString()}</div>
-    </div>
-  `).join('');
 }
 
-function startLeaderboardUpdates() {
-  updateFakeLeaderboard();
-  G.leaderboardInterval = setInterval(()=>{
-    // Randomly shift fake player scores slightly
-    fakeScores = fakeScores.map((s,i)=> s===null?null:s+Math.floor(Math.random()*20));
-    renderLeaderboard();
-  }, 5000);
+function playAgain() {
+  goTo('setup-screen');
+  startSetupTimer();
 }
-
-// ── AI INSIGHTS ────────────────────────────────────────────────────
-let insightIdx = 0;
-function startAIInsights() {
-  updateAIInsight(0);
-  setInterval(()=>{
-    insightIdx = (insightIdx+1) % AI_INSIGHTS.length;
-    updateAIInsight(insightIdx);
-  }, 8000);
-}
-function updateAIInsight(i) {
-  const el = document.getElementById('ai-insight-text');
-  if (el) el.innerHTML = AI_INSIGHTS[i % AI_INSIGHTS.length];
-}
-
-// ── TOAST NOTIFICATIONS ────────────────────────────────────────────
-function toast(msg, duration=4000) {
-  const wrap = document.getElementById('toasts');
-  const el = document.createElement('div');
-  el.className = 'toast';
-  el.innerHTML = msg;
-  wrap.appendChild(el);
-  setTimeout(()=>{
-    el.classList.add('out');
-    setTimeout(()=>el.remove(), 300);
-  }, duration);
-}
-
-let notifIdx = 0;
-function scheduleNotifs() {
-  const delays = [3500, 8000, 15000, 22000, 30000, 42000];
-  delays.forEach((d,i)=>{
-    setTimeout(()=>{
-      if (document.getElementById('screen-gameplay').classList.contains('active')) {
-        toast(NOTIFS[i % NOTIFS.length]);
-      }
-    }, d);
-  });
-}
-
-// ── RESTART ────────────────────────────────────────────────────────
-function restartGame() {
-  G.score=0; G.tasksCompleted=0; G.wave=1; G.apexAccepted=false;
-  G.escShown=false; G.fakeRank=4; G.aiRecsClicked=0; G.urgentClicked=0;
-  G.darkPatternsHit=new Set(); fakeScores=[0,0,0,0,0,0];
-  document.getElementById('dp-reveal').classList.remove('vis');
-  document.getElementById('dp-cards').innerHTML='';
-  document.querySelector('.reveal-wrap').style.display='';
-  document.getElementById('wave-banner').style.display='none';
-  document.getElementById('task-feed').innerHTML='';
-  document.getElementById('score-display').textContent='0';
-  document.getElementById('rank-num').textContent='#4';
-  document.getElementById('prog-fill').style.width='0%';
-  document.getElementById('prog-pct').textContent='0%';
-  document.getElementById('toasts').innerHTML='';
-  showScreen('welcome');
-}
-
-// ── INIT ───────────────────────────────────────────────────────────
-showScreen('welcome');
 </script>
 </body>
 </html>
