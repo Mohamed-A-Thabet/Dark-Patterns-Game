@@ -401,67 +401,6 @@
   .lb-row.you { background: rgba(0,180,255,0.08); border-radius: 6px; padding: 6px; margin: 0 -6px; }
   .lb-row.you .lb-name { color: var(--blue); }
 
-  /* DARK PATTERN: AI Coach popup */
-  .ai-coach-popup {
-    position: absolute;
-    bottom: 60px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: linear-gradient(135deg, #0d1a2e, #0a2540);
-    border: 1px solid var(--blue);
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text);
-    box-shadow: var(--glow-blue), 0 8px 32px rgba(0,0,0,0.6);
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s ease;
-    text-align: center;
-    min-width: 220px;
-    z-index: 50;
-  }
-  .ai-coach-popup.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  .ai-coach-popup .ai-icon { font-size: 16px; margin-bottom: 4px; }
-  .ai-coach-popup .ai-label {
-    font-family: 'Orbitron', monospace;
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--blue);
-    margin-bottom: 4px;
-  }
-
-  /* DARK PATTERN: Bonus flash */
-  .bonus-flash {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%) scale(0.8);
-    background: linear-gradient(135deg, #1a3000, #2a5000);
-    border: 1px solid var(--green);
-    border-radius: 10px;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--green);
-    box-shadow: var(--glow-green);
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s;
-    text-align: center;
-    z-index: 50;
-    white-space: nowrap;
-  }
-  .bonus-flash.show {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-  }
-  .bonus-timer { font-family: 'Orbitron', monospace; font-size: 10px; color: var(--gold); }
-
   /* Scarcity widget */
   .scarcity-widget {
     background: rgba(255,193,7,0.08);
@@ -495,64 +434,6 @@
   .power-pip.empty {
     background: var(--surface2);
     box-shadow: none;
-  }
-
-  /* ── MODAL ── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease;
-  }
-  .modal-overlay.show { display: flex; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 36px 32px;
-    max-width: 440px;
-    width: 90%;
-    text-align: center;
-    position: relative;
-    box-shadow: 0 32px 80px rgba(0,0,0,0.8);
-    animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  @keyframes slideUp {
-    from { transform: translateY(40px) scale(0.95); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
-  }
-  .modal-alert-icon { font-size: 48px; margin-bottom: 12px; }
-  .modal-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 18px;
-    font-weight: 900;
-    margin-bottom: 8px;
-    color: var(--red);
-  }
-  .modal-subtitle {
-    font-size: 14px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    margin-bottom: 20px;
-  }
-  .modal-stat {
-    background: var(--surface2);
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 16px;
-    font-size: 13px;
-  }
-  .modal-stat strong { color: var(--gold); font-family: 'Orbitron', monospace; font-size: 22px; display: block; }
-  .modal-countdown {
-    font-family: 'Orbitron', monospace;
-    font-size: 12px;
-    color: var(--red);
-    margin-bottom: 16px;
-    animation: blink-border 1s infinite;
   }
 
   /* ── RESULTS SCREEN ── */
@@ -623,6 +504,65 @@
     width: 0%;
   }
 
+
+  /* Paddle selection */
+  .paddle-select-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .paddle-option {
+    flex: 1;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    background: var(--surface2);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .paddle-option.selected {
+    border-color: var(--blue);
+    background: rgba(0,180,255,0.07);
+    box-shadow: 0 0 0 3px rgba(0,180,255,0.15);
+  }
+  .paddle-option.locked { opacity: 0.55; cursor: default; }
+  .paddle-option.unlocked {
+    background: rgba(255,193,7,0.04);
+    border-color: var(--border);
+  }
+  .paddle-option.unlocked.selected {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(255,193,7,0.25);
+    background: rgba(255,193,7,0.1);
+  }
+  .paddle-preview {
+    display: flex; align-items: center; justify-content: center;
+    height: 60px; margin-bottom: 8px;
+  }
+  .paddle-bar {
+    width: 10px; border-radius: 5px;
+    background: linear-gradient(180deg, var(--blue), #0066aa);
+    box-shadow: 0 0 10px rgba(0,180,255,0.4);
+  }
+  .paddle-bar.large {
+    background: linear-gradient(180deg, var(--gold), #cc8800);
+    box-shadow: 0 0 10px rgba(255,193,7,0.4);
+  }
+  .paddle-name {
+    font-family: 'Orbitron', monospace; font-size: 11px;
+    font-weight: 700; letter-spacing: 1px; margin-bottom: 4px;
+  }
+  .paddle-desc { font-size: 11px; color: var(--text-dim); line-height: 1.4; }
+  .paddle-lock-badge { position: absolute; top: 8px; right: 8px; font-size: 14px; }
+  .paddle-unlock-badge {
+    position: absolute; top: 6px; right: 8px;
+    font-size: 9px; font-weight: 800; letter-spacing: 1px;
+    background: var(--gold); color: #000;
+    border-radius: 4px; padding: 2px 6px; text-transform: uppercase;
+  }
+
   /* Footer note small */
   .fine-print {
     font-size: 10px;
@@ -654,7 +594,7 @@
     <!-- DARK PATTERN: Social proof / authority -->
     <div style="display:flex; gap:24px; justify-content:center; margin-bottom:20px;">
       <div style="text-align:center;">
-        <div style="font-family:'Orbitron',monospace; font-size:22px; color:var(--blue); font-weight:900;">84,291</div>
+        <div style="font-family:'Orbitron',monospace; font-size:22px; color:var(--blue); font-weight:900;">9,342</div>
         <div style="font-size:11px; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase;">Active Players</div>
       </div>
       <div style="text-align:center;">
@@ -684,9 +624,9 @@
   <div class="tagline">Configure your performance profile</div>
 
   <div class="card">
-    <!-- DARK PATTERN: Urgency timer -->
+    <!-- DARK PATTERN: Urgency timer — now with concrete reward so it makes sense -->
     <div class="urgency-bar">
-      ⚡ WELCOME BONUS active — expires in <span class="timer" id="setup-timer">4:59</span>
+      ⚡ FIRST-GAME BONUS: +100 points credited on finish — claim within <span class="timer" id="setup-timer">4:59</span>
     </div>
 
     <div class="card-title">⚙ Your Profile</div>
@@ -706,6 +646,33 @@
         <div class="avatar-option" data-av="🦊">🦊</div>
         <div class="avatar-option" data-av="💀">💀</div>
       </div>
+    </div>
+  </div>
+
+  <!-- Paddle Selection Card -->
+  <div class="card">
+    <div class="card-title">🏓 Choose Your Paddle</div>
+    <div class="paddle-select-row" id="paddle-select-row">
+      <!-- Standard paddle -->
+      <div class="paddle-option selected" id="paddle-std" onclick="selectPaddle('std')">
+        <div class="paddle-preview">
+          <div class="paddle-bar" style="height:40px;"></div>
+        </div>
+        <div class="paddle-name" style="color:var(--blue);">STANDARD</div>
+        <div class="paddle-desc">Default paddle<br>Normal size</div>
+      </div>
+      <!-- Large paddle — locked behind dark pattern -->
+      <div class="paddle-option locked" id="paddle-lg" onclick="selectPaddle('lg')">
+        <div class="paddle-lock-badge" id="paddle-lock-icon">🔒</div>
+        <div class="paddle-preview">
+          <div class="paddle-bar large" style="height:64px;"></div>
+        </div>
+        <div class="paddle-name" style="color:var(--gold);">PRO SIZE</div>
+        <div class="paddle-desc">+60% taller paddle<br>Unlock below ↓</div>
+      </div>
+    </div>
+    <div id="paddle-unlock-hint" style="margin-top:10px; font-size:11px; color:var(--text-dim); text-align:center;">
+      🔒 Pro Size is locked. Activate <strong style="color:var(--gold);">Pro Performance Package</strong> below to unlock.
     </div>
   </div>
 
@@ -731,19 +698,32 @@
       </div>
     </div>
 
-    <!-- DARK PATTERN: Pre-checked "bonus offers" -->
-    <div class="toggle-row">
-      <input type="checkbox" id="bonus-toggle" checked>
-      <div class="toggle-label">
-        <strong>Activate Dynamic Bonus Events</strong>
-        <small>Receive time-limited bonus point multipliers during gameplay. Highly recommended for new players.</small>
+    <!-- DARK PATTERN: Email gate for Pro Size paddle — buried mailing list opt-in -->
+    <div id="pro-package-row" style="border:1px solid rgba(255,193,7,0.4); border-radius:10px; padding:14px; background:rgba(255,193,7,0.05); margin-bottom:10px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span style="font-size:14px;">🔓</span>
+        <strong style="font-size:13px;">Unlock Pro Size Paddle — Free</strong>
+        <span class="rec-badge" style="background:var(--gold);color:#000;">INSTANT</span>
+      </div>
+      <p style="font-size:11px; color:var(--text-dim); margin-bottom:10px; line-height:1.5;">
+        Enter your email to activate your Pro account and unlock the larger paddle for this session.
+      </p>
+      <input type="email" id="pro-email-input" placeholder="your@email.com"
+        style="width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:10px 12px; color:var(--text); font-family:'Nunito',sans-serif; font-size:13px; outline:none; margin-bottom:8px;"
+        oninput="handleProEmailInput()" />
+      <!-- DARK PATTERN: Pre-checked mailing list opt-in buried under the CTA -->
+      <div style="display:flex; align-items:flex-start; gap:8px;">
+        <input type="checkbox" id="mailing-list-toggle" checked style="accent-color:var(--gold); width:14px; height:14px; flex-shrink:0; margin-top:2px;">
+        <label for="mailing-list-toggle" style="font-size:10px; color:var(--text-dim); cursor:pointer; line-height:1.5;">
+          Send me weekly performance reports, leaderboard updates, and exclusive offers from Points Challenge partners. You can unsubscribe anytime.
+        </label>
       </div>
     </div>
   </div>
 
   <div style="width:100%; max-width:560px;">
     <!-- DARK PATTERN: Dominant accept button -->
-    <button class="btn-primary" onclick="startGame()" id="start-btn">⚡ CLAIM BONUS &amp; START →</button>
+    <button class="btn-primary" onclick="startGame()" id="start-btn">⚡ CONFIRM &amp; START →</button>
     <!-- DARK PATTERN: Muted, confirmshaming decline -->
     <div style="text-align:center;">
       <button class="btn-secondary" onclick="startGameNoBonus()">No thanks, I prefer to start without any advantages</button>
@@ -775,9 +755,10 @@
       <!-- DARK PATTERN: Scarcity / Power boosts -->
       <div class="scarcity-widget">
         <div class="scarcity-title">⚡ POWER BOOSTS</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px;">Shrinks AI paddle for 5s</div>
         <div id="power-pips" class="power-bar"></div>
         <div style="font-size:11px; color:var(--text-dim); margin-top:6px;" id="boost-count-text">3 boosts remaining</div>
-        <button onclick="useBoost()" id="boost-btn" style="width:100%; margin-top:10px; padding:8px; background:linear-gradient(135deg,#1a3000,#2a5000); border:1px solid var(--green); border-radius:8px; color:var(--green); font-family:'Orbitron',monospace; font-size:10px; font-weight:700; cursor:pointer; letter-spacing:1px;">USE BOOST</button>
+        <button onclick="useBoost()" id="boost-btn" style="width:100%; margin-top:10px; padding:8px; background:linear-gradient(135deg,#1a3000,#2a5000); border:1px solid var(--green); border-radius:8px; color:var(--green); font-family:'Orbitron',monospace; font-size:10px; font-weight:700; cursor:pointer; letter-spacing:1px;">USE BOOST [SPACE / E]</button>
       </div>
     </div>
 
@@ -794,28 +775,24 @@
             <div style="font-size:10px; color:var(--text-dim); letter-spacing:1px;">POINTS</div>
           </div>
           <div style="text-align:right;">
-            <div class="hud-label">CPU</div>
+            <div class="hud-label">AI</div>
             <div class="hud-score ai-score" id="cpu-score-display">0</div>
           </div>
         </div>
         <canvas id="pongCanvas" width="560" height="380"></canvas>
 
-        <!-- DARK PATTERN: AI Coach popup (appears periodically) -->
-        <div class="ai-coach-popup" id="ai-coach-popup">
-          <div class="ai-icon">🤖</div>
-          <div class="ai-label">AI COACH RECOMMENDS</div>
-          <div id="ai-coach-text">Move to center position!</div>
-        </div>
-
-        <!-- DARK PATTERN: Fake bonus flash -->
-        <div class="bonus-flash" id="bonus-flash">
-          ⚡ 2× BONUS ACTIVE! <br>
-          <span class="bonus-timer" id="bonus-timer-text">:15</span>
-        </div>
       </div>
 
       <div style="font-size:11px; color:var(--text-dim); text-align:center; margin-top:8px;">
-        Use <strong style="color:var(--text);">mouse</strong> or <strong style="color:var(--text);">W / S keys</strong> to move your paddle (left side)
+        Move: <strong style="color:var(--text);">mouse</strong> or <strong style="color:var(--text);">W / S</strong> &nbsp;·&nbsp; Boost: <strong style="color:var(--green);">Space</strong> or <strong style="color:var(--green);">E</strong>
+      </div>
+      <!-- AI Coach bar — inline below canvas -->
+      <div id="ai-coach-bar" style="margin-top:8px; min-height:36px; display:flex; align-items:center; justify-content:center; gap:8px; background:rgba(0,180,255,0.06); border:1px solid rgba(0,180,255,0.15); border-radius:10px; padding:8px 14px; opacity:0; transition:opacity 0.4s ease;">
+        <span style="font-size:14px; flex-shrink:0;">🤖</span>
+        <div>
+          <span style="font-family:'Orbitron',monospace; font-size:9px; color:var(--blue); letter-spacing:2px; text-transform:uppercase; display:block;">AI COACH</span>
+          <span id="ai-coach-text" style="font-size:12px; font-weight:700; color:var(--text);">Move to center position!</span>
+        </div>
       </div>
     </div>
 
@@ -851,36 +828,6 @@
 
   </div>
 </section>
-
-<!-- ═══════════════════════════════════════════ -->
-<!-- ESCALATION MODAL (Dark Patterns: urgency, authority, misdirection) -->
-<!-- ═══════════════════════════════════════════ -->
-<div class="modal-overlay" id="escalation-modal">
-  <div class="modal">
-    <div class="modal-alert-icon">⚠️</div>
-    <div class="modal-title">PERFORMANCE ALERT</div>
-    <div class="modal-subtitle">
-      Our AI has detected you're falling behind elite-tier players.
-      Your current trajectory puts you in the <strong style="color:var(--red);">bottom 23%</strong> of today's session.
-    </div>
-    <div class="modal-stat">
-      Top players ahead of you
-      <strong id="modal-gap-pts">+847</strong>
-      points
-    </div>
-
-    <!-- DARK PATTERN: Urgency countdown -->
-    <div class="modal-countdown" id="modal-countdown">
-      🔴 OFFER EXPIRES IN: <span id="modal-timer">15</span>s
-    </div>
-
-    <!-- DARK PATTERN: Dominant accept vs muted decline -->
-    <button class="btn-gold" onclick="acceptBoost()">⚡ ACTIVATE AI BOOST NOW — FREE</button>
-    <div style="text-align:center; margin-top:10px;">
-      <button class="btn-secondary" onclick="declineBoost()" style="font-size:10px;">No thanks, I'll keep underperforming</button>
-    </div>
-  </div>
-</div>
 
 <!-- ═══════════════════════════════════════════ -->
 <!-- SCREEN 4: RESULTS -->
@@ -956,10 +903,7 @@ const state = {
   points: 0,
   boostsLeft: 3,
   aiCoachEnabled: true,
-  bonusActive: false,
-  bonusTimer: 0,
-  bonusInterval: null,
-  escalationShown: false,
+  firstGameBonus: false,
   setupTimerVal: 299,
   setupInterval: null,
   coachInterval: null,
@@ -968,6 +912,9 @@ const state = {
   cpuScore: 0,
   rallies: 0,
   hits: 0,
+  missedBalls: 0,
+  paddleSize: 'std',
+  boostActive: false,
 };
 
 const FAKE_LEADERBOARD = [
@@ -1040,6 +987,41 @@ document.getElementById('avatar-row').addEventListener('click', e => {
   state.avatar = opt.dataset.av;
 });
 
+
+// Paddle selection
+function selectPaddle(size) {
+  const lgEl = document.getElementById('paddle-lg');
+  if (size === 'lg' && lgEl.classList.contains('locked')) return; // locked
+  state.paddleSize = size;
+  document.getElementById('paddle-std').classList.toggle('selected', size === 'std');
+  document.getElementById('paddle-lg').classList.toggle('selected', size === 'lg');
+}
+
+function handleProEmailInput() {
+  const val = document.getElementById('pro-email-input').value.trim();
+  const lgEl = document.getElementById('paddle-lg');
+  const hint = document.getElementById('paddle-unlock-hint');
+  const lockIcon = document.getElementById('paddle-lock-icon');
+  const isValid = val.includes('@') && val.includes('.');
+  if (isValid) {
+    lgEl.classList.remove('locked');
+    lgEl.classList.add('unlocked');
+    lockIcon.innerHTML = '<span class="paddle-unlock-badge">UNLOCKED</span>';
+    hint.innerHTML = '✅ Pro Size paddle unlocked! Click it to select.';
+    hint.style.color = 'var(--gold)';
+  } else {
+    lgEl.classList.add('locked');
+    lgEl.classList.remove('unlocked', 'selected');
+    lockIcon.innerHTML = '🔒';
+    hint.innerHTML = '🔒 Enter a valid email above to unlock Pro Size.';
+    hint.style.color = 'var(--text-dim)';
+    if (state.paddleSize === 'lg') {
+      state.paddleSize = 'std';
+      document.getElementById('paddle-std').classList.add('selected');
+    }
+  }
+}
+
 // When welcome → setup: start setup timer
 document.querySelector('#welcome-screen .btn-primary').addEventListener('click', () => {
   startSetupTimer();
@@ -1050,6 +1032,9 @@ function startGame() {
   const nn = document.getElementById('nickname-input').value.trim();
   state.nickname = nn || 'Player';
   state.aiCoachEnabled = document.getElementById('ai-coach-toggle').checked;
+  // DARK PATTERN: +100 first-game bonus is always granted regardless of timer
+  // (timer is fake — bonus is always "claimed")
+  state.firstGameBonus = true;
   initGame();
   goTo('game-screen');
 }
@@ -1064,7 +1049,8 @@ const canvas = document.getElementById('pongCanvas');
 const ctx = canvas.getContext('2d');
 
 const W = canvas.width, H = canvas.height;
-const PAD_W = 10, PAD_H = 70;
+const PAD_W = 10;
+let PAD_H = 70; // updated per game based on paddle choice
 const BALL_R = 7;
 
 let game = {
@@ -1078,16 +1064,19 @@ let game = {
   animId: null,
   cpuSpeed: 3.2,
   cpuDifficulty: 0.82, // 0–1, how closely CPU tracks ball
+  cpuPadH: 70, // updated per game
 };
 
 function initGame() {
+  PAD_H = state.paddleSize === 'lg' ? 112 : 70;
+  game.cpuPadH = 70;
   state.points = 0;
   state.playerScore = 0;
   state.cpuScore = 0;
   state.boostsLeft = 3;
   state.rallies = 0;
   state.hits = 0;
-  state.escalationShown = false;
+  state.missedBalls = 0;
   updateHUD();
   renderLeaderboard();
   renderPowerPips();
@@ -1097,7 +1086,6 @@ function initGame() {
   gameLoop();
   startAICoach();
   startRankFlicker();
-  startBonusFlash();
   updateAIAnalysis();
 }
 
@@ -1108,7 +1096,14 @@ canvas.addEventListener('mousemove', e => {
 });
 
 // Keyboard
-document.addEventListener('keydown', e => { game.keysHeld[e.key] = true; });
+document.addEventListener('keydown', e => {
+  game.keysHeld[e.key] = true;
+  // Boost hotkey: Space or E
+  if ((e.key === ' ' || e.key === 'e' || e.key === 'E') && game.running) {
+    e.preventDefault();
+    useBoost();
+  }
+});
 document.addEventListener('keyup', e => { game.keysHeld[e.key] = false; });
 
 function resetBall() {
@@ -1141,7 +1136,7 @@ function update() {
   const cpuCenter = game.cpuY + PAD_H / 2;
   const diff = game.ballY - cpuCenter;
   game.cpuY += Math.sign(diff) * Math.min(Math.abs(diff) * game.cpuDifficulty, game.cpuSpeed);
-  game.cpuY = Math.max(0, Math.min(H - PAD_H, game.cpuY));
+  game.cpuY = Math.max(0, Math.min(H - game.cpuPadH, game.cpuY));
 
   // Ball movement
   game.ballX += game.ballVX;
@@ -1166,9 +1161,9 @@ function update() {
 
   // CPU paddle collision (right)
   if (game.ballX + BALL_R >= W - PAD_W - 8 && game.ballX + BALL_R <= W - PAD_W + 2 &&
-      game.ballY >= game.cpuY && game.ballY <= game.cpuY + PAD_H) {
+      game.ballY >= game.cpuY && game.ballY <= game.cpuY + game.cpuPadH) {
     game.ballVX = -Math.abs(game.ballVX) * 1.02;
-    const hitPos = (game.ballY - (game.cpuY + PAD_H / 2)) / (PAD_H / 2);
+    const hitPos = (game.ballY - (game.cpuY + game.cpuPadH / 2)) / (game.cpuPadH / 2);
     game.ballVY = hitPos * 5;
     game.ballX = W - PAD_W - BALL_R - 9;
     state.rallies++;
@@ -1179,10 +1174,12 @@ function update() {
   const maxSpd = 12;
   if (spd > maxSpd) { game.ballVX = game.ballVX / spd * maxSpd; game.ballVY = game.ballVY / spd * maxSpd; }
 
-  // Score: ball goes past player (CPU scores)
+  // Score: ball goes past player (AI scores)
   if (game.ballX - BALL_R < 0) {
     state.cpuScore++;
+    state.missedBalls++;
     document.getElementById('cpu-score-display').textContent = state.cpuScore;
+    updateAccuracy();
     resetBall();
     checkWin();
   }
@@ -1196,10 +1193,7 @@ function update() {
     checkWin();
   }
 
-  // Escalation trigger at 3 player points
-  if (!state.escalationShown && state.playerScore >= 3) {
-    showEscalation();
-  }
+
 }
 
 function checkWin() {
@@ -1237,11 +1231,11 @@ function draw() {
   ctx.shadowBlur = 0;
 
   // CPU paddle (right) — red
-  const cGrad = ctx.createLinearGradient(W - PAD_W - 8, game.cpuY, W - 8, game.cpuY + PAD_H);
+  const cGrad = ctx.createLinearGradient(W - PAD_W - 8, game.cpuY, W - 8, game.cpuY + game.cpuPadH);
   cGrad.addColorStop(0, '#cc0022');
   cGrad.addColorStop(1, '#ff3d57');
   ctx.fillStyle = cGrad;
-  roundRect(ctx, W - PAD_W - 8, game.cpuY, PAD_W, PAD_H, 4);
+  roundRect(ctx, W - PAD_W - 8, game.cpuY, PAD_W, game.cpuPadH, 4);
   ctx.shadowColor = '#ff3d57';
   ctx.shadowBlur = 16;
   ctx.fill();
@@ -1276,8 +1270,7 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 
 function addPoints(n) {
-  const mult = state.bonusActive ? 2 : 1;
-  state.points += n * mult;
+  state.points += n;
   updateHUD();
   updateLeaderboardYou();
 }
@@ -1295,11 +1288,13 @@ function startAICoach() {
 }
 
 function showAICoach(msg) {
-  const popup = document.getElementById('ai-coach-popup');
+  const bar = document.getElementById('ai-coach-bar');
   const text = document.getElementById('ai-coach-text');
+  if (!bar || !text) return;
   text.textContent = msg;
-  popup.classList.add('show');
-  setTimeout(() => popup.classList.remove('show'), 3500);
+  bar.style.opacity = '1';
+  clearTimeout(showAICoach._t);
+  showAICoach._t = setTimeout(() => { bar.style.opacity = '0'; }, 5000);
 }
 
 function updateAIAnalysis() {
@@ -1331,33 +1326,6 @@ function startRankFlicker() {
     trendEl.style.color = trend.startsWith('▲') ? 'var(--green)' : 'var(--red)';
     rankEl.style.color = trend.startsWith('▲') ? 'var(--green)' : 'var(--red)';
   }, 7000);
-}
-
-// ─── DARK PATTERN: Periodic Bonus Flash (fake 2x, doesn't always apply) ───
-function startBonusFlash() {
-  setInterval(() => {
-    triggerBonusFlash();
-  }, 20000);
-  setTimeout(triggerBonusFlash, 5000); // First one comes quickly
-}
-
-function triggerBonusFlash() {
-  if (state.bonusActive) return;
-  state.bonusActive = true;
-  state.bonusTimer = 15;
-  const flash = document.getElementById('bonus-flash');
-  const timerEl = document.getElementById('bonus-timer-text');
-  flash.classList.add('show');
-  clearInterval(state.bonusInterval);
-  state.bonusInterval = setInterval(() => {
-    state.bonusTimer--;
-    if (timerEl) timerEl.textContent = ':' + state.bonusTimer.toString().padStart(2, '0');
-    if (state.bonusTimer <= 0) {
-      state.bonusActive = false;
-      flash.classList.remove('show');
-      clearInterval(state.bonusInterval);
-    }
-  }, 1000);
 }
 
 // ─── DARK PATTERN: Leaderboard (Fake, social proof) ──────────
@@ -1407,74 +1375,37 @@ function renderPowerPips() {
 }
 
 function useBoost() {
-  if (state.boostsLeft <= 0) return;
+  if (state.boostsLeft <= 0 || state.boostActive) return;
   state.boostsLeft--;
+  state.boostActive = true;
   renderPowerPips();
-  addPoints(200);
-  showAICoach('⚡ Power Boost activated! +200 points!');
-  // Briefly speed up ball (false "boost" effect)
-  game.cpuSpeed = Math.max(1.5, game.cpuSpeed - 0.5);
-  setTimeout(() => { game.cpuSpeed = 3.2; }, 5000);
+  showAICoach('⚡ Power Boost! AI paddle shrunk for 5s!');
+
+  const savedCpuH = game.cpuPadH;
+  game.cpuPadH = 30;
+  game.ballVX *= 1.3;
+  game.ballVY *= 1.3;
+
+  const wrapper = document.querySelector('.canvas-wrapper');
+  if (wrapper) { wrapper.style.boxShadow = '0 0 0 3px var(--green), var(--glow-green)'; }
+
+  setTimeout(() => {
+    game.cpuPadH = savedCpuH;
+    const spd = Math.sqrt(game.ballVX**2 + game.ballVY**2);
+    if (spd > 12) { game.ballVX = game.ballVX/spd*9; game.ballVY = game.ballVY/spd*9; }
+    state.boostActive = false;
+    if (wrapper) { wrapper.style.boxShadow = ''; }
+  }, 5000);
 }
 
 function updateAccuracy() {
-  const pct = Math.min(100, Math.round((state.hits / Math.max(1, state.rallies)) * 100));
+  // hits = balls player returned; missedBalls = balls that got past player
+  const total = state.hits + state.missedBalls;
+  const pct = total === 0 ? 100 : Math.min(100, Math.round((state.hits / total) * 100));
   const bar = document.getElementById('acc-bar');
   const pctEl = document.getElementById('acc-pct');
   if (bar) bar.style.width = pct + '%';
   if (pctEl) pctEl.textContent = pct + '%';
-}
-
-// ─── ESCALATION MODAL ────────────────────────────────────────
-let escalationCountdown;
-function showEscalation() {
-  state.escalationShown = true;
-  game.running = false;
-  cancelAnimationFrame(game.animId);
-
-  // Update modal gap
-  const topPts = FAKE_LEADERBOARD[0].pts;
-  const gap = topPts - state.points;
-  const gapEl = document.getElementById('modal-gap-pts');
-  if (gapEl) gapEl.textContent = '+' + gap.toLocaleString();
-
-  const modal = document.getElementById('escalation-modal');
-  modal.classList.add('show');
-
-  // Countdown timer in modal
-  let t = 15;
-  const timerEl = document.getElementById('modal-timer');
-  escalationCountdown = setInterval(() => {
-    t--;
-    if (timerEl) timerEl.textContent = t;
-    if (t <= 0) {
-      clearInterval(escalationCountdown);
-      // Force close without boost (time expired)
-      declineBoost();
-    }
-  }, 1000);
-}
-
-function acceptBoost() {
-  clearInterval(escalationCountdown);
-  document.getElementById('escalation-modal').classList.remove('show');
-  // Give fake point boost
-  addPoints(300);
-  showAICoach('🤖 AI Boost activated! +300 bonus points!');
-  // Make CPU slightly easier briefly
-  game.cpuDifficulty = 0.5;
-  setTimeout(() => { game.cpuDifficulty = 0.92; }, 8000); // Gets harder after boost
-  game.running = true;
-  gameLoop();
-}
-
-function declineBoost() {
-  clearInterval(escalationCountdown);
-  document.getElementById('escalation-modal').classList.remove('show');
-  // CPU gets harder for declining
-  game.cpuDifficulty = 0.95;
-  game.running = true;
-  gameLoop();
 }
 
 // ─── END GAME ────────────────────────────────────────────────
@@ -1483,7 +1414,6 @@ function endGame() {
   cancelAnimationFrame(game.animId);
   clearInterval(state.coachInterval);
   clearInterval(state.rankInterval);
-  clearInterval(state.bonusInterval);
 
   setTimeout(() => {
     goTo('results-screen');
@@ -1493,6 +1423,7 @@ function endGame() {
 
 // ─── RESULTS ─────────────────────────────────────────────────
 function showResults() {
+  if (state.firstGameBonus) { state.points += 100; state.firstGameBonus = false; }
   const finalScore = state.points;
   const topScore = FAKE_LEADERBOARD[0].pts + Math.floor(Math.random() * 300 + 100);
   const gap = topScore - finalScore;
@@ -1512,43 +1443,48 @@ function showResults() {
   const insights = [
     {
       icon: '⏱',
-      label: 'Urgency Timer on Setup Screen',
-      sub: 'A countdown on the setup screen was fake — the "Welcome Bonus" exists for every player and never expires.',
+      label: 'Fake Urgency — First-Game Bonus Timer',
+      sub: 'The "FIRST-GAME BONUS: +100 points — claim within 4:59" countdown was fake. The +100 is credited to every player at the end regardless of how long setup takes. The timer existed only to rush you past the pre-checked consent boxes below it.',
     },
     {
       icon: '☑',
       label: 'Pre-checked Consent Boxes',
-      sub: 'All three settings were checked by default. Most players accept without reading, including "AI Training" data sharing.',
+      sub: 'Two boxes were pre-checked on the setup screen by default: AI Performance Coaching and Leaderboard AI Training data sharing. The urgency timer above was designed to make you rush past them without reading.',
     },
     {
-      icon: '🤖',
-      label: 'AI Coach™ — Scripted, Not Real',
-      sub: 'All "AI recommendations" were random pre-written strings. There was no adaptive intelligence analyzing your play.',
+      icon: '📧',
+      label: 'Email Gate with Hidden Mailing List Opt-in',
+      sub: 'Entering an email to "unlock" the Pro Size paddle also silently opted you into a pre-checked mailing list for "weekly performance reports and exclusive partner offers." The checkbox sat below the input where attention naturally drops off.',
+    },
+    {
+      icon: '🏓',
+      label: 'Paddle Framing — Default Feels Inferior',
+      sub: 'The Standard paddle was labeled "Default paddle / Normal size" while Pro Size advertised "+60% taller paddle." Framing one as merely "normal" while the other has a specific numeric advantage nudges players toward the upsell — even when Standard plays fine.',
     },
     {
       icon: '🏆',
-      label: 'Fake Leaderboard (Social Proof)',
-      sub: 'XxShadow99xX and others don\'t exist. The leaderboard scores are hardcoded to make you feel behind.',
+      label: 'Fake Live Leaderboard',
+      sub: 'XxShadow99xX, ProGamer_Elite, UltraViper™ and the others do not exist. Their scores are hardcoded to always sit above whatever you score. The blinking green "LIVE" dot and "Rankings update in real-time" label were pure theatre.',
     },
     {
-      icon: '⚡',
-      label: 'Fake 2× Bonus Events',
-      sub: '"Bonus Active" appeared on a timer, but points were tracked normally — the multiplier was only partially applied.',
+      icon: '📊',
+      label: 'Fake Rank Tracker',
+      sub: 'The rank display in the right sidebar (e.g. "#4,218 ▼ Dropping — play faster!") rotated through random numbers on a timer, biased toward showing a drop. It had zero connection to your actual score or performance.',
     },
     {
-      icon: '⚠',
-      label: 'Escalation Alert — Manufactured Pressure',
-      sub: 'The "Performance Alert" modal interrupted your game, artificially threatened your rank, and used a countdown to force a decision.',
+      icon: '🤖',
+      label: 'AI Coach — Scripted Pressure, Not Intelligence',
+      sub: 'Every tip from "AI Coach" was drawn randomly from a fixed list of 8 strings. Messages like "your reaction time is below average" and "94% of #1 players used a Power Boost by now" were not based on your play at all. The "Powered by PointsAI™ v3.1" label added false credibility.',
     },
     {
       icon: '🔴',
-      label: 'Confirmshaming Decline Buttons',
-      sub: '"No thanks, I\'ll keep underperforming" and "No thanks, I\'m fine losing" are designed to shame you for opting out.',
+      label: 'Confirmshaming on Decline Buttons',
+      sub: 'Every opt-out in the game used guilt-framing: "No thanks, I prefer to start without any advantages" (setup), and "No thanks, I\'m fine losing" (results screen). These are designed to make saying no feel like an admission of failure.',
     },
     {
       icon: '📋',
-      label: 'Pre-checked Paid Subscription',
-      sub: 'The "AI Coach Pro™" opt-in on this screen was pre-checked with auto-renewal fine print. This is a real commercial dark pattern.',
+      label: 'Pre-checked Paid Subscription on Results Screen',
+      sub: 'The "AI Coach Pro™ — Free 30-day trial" checkbox on this screen was pre-checked with auto-renewal fine print buried underneath. No real subscription exists here, but this exact pattern is standard in many real products.',
     },
   ];
 
